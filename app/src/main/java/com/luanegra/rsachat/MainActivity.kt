@@ -15,6 +15,7 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.FragmentPagerAdapter
 import androidx.viewpager.widget.ViewPager
+import com.bumptech.glide.Glide
 import com.google.android.material.tabs.TabLayout
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
@@ -23,7 +24,6 @@ import com.luanegra.rsachat.fragments.ChatFragment
 import com.luanegra.rsachat.fragments.SearchFragment
 import com.luanegra.rsachat.fragments.SettingsFragment
 import com.luanegra.rsachat.modelclasses.Users
-import com.squareup.picasso.Picasso
 import java.util.ArrayList
 
 class MainActivity : AppCompatActivity() {
@@ -50,7 +50,7 @@ class MainActivity : AppCompatActivity() {
 
         viewPagerAdapter.addFragment(ChatFragment(), "Chats")
         viewPagerAdapter.addFragment(SearchFragment(), "Search")
-        viewPagerAdapter.addFragment(SettingsFragment(), "Chats")
+        viewPagerAdapter.addFragment(SettingsFragment(), "My Profile")
 
         viewPager.adapter = viewPagerAdapter
         tableLayout.setupWithViewPager(viewPager)
@@ -60,7 +60,10 @@ class MainActivity : AppCompatActivity() {
                 if(snapshot.exists()){
                     val user: Users? = snapshot.getValue(Users::class.java)
                     user_name.text = user!!.getusername()
-                    Picasso.get().load(user!!.getprofile()).placeholder(R.drawable.ic_person_24px).into(profile_image)
+                    Glide.with(applicationContext).load(user!!.getprofile()).placeholder(R.drawable.profile_1).into(profile_image)
+                    val map = HashMap<String, Any>()
+                    map["status"] = "on"
+                    refUsers!!.updateChildren(map)
                 }
             }
 
@@ -79,16 +82,24 @@ class MainActivity : AppCompatActivity() {
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
             R.id.action_logout -> {
-                FirebaseAuth.getInstance().signOut()
-                val intent = Intent(this@MainActivity, WelcomeActivity::class.java)
-                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK)
-                startActivity(intent)
-                finish()
+                val map = HashMap<String, Any>()
+                map["status"] = "off"
+                refUsers!!.updateChildren(map).addOnCompleteListener { task ->
+                    if(task.isSuccessful){
+                        FirebaseAuth.getInstance().signOut()
+                        val intent = Intent(this@MainActivity, WelcomeActivity::class.java)
+                        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK)
+                        startActivity(intent)
+                        finish()
+                    }
+                }
+
             return true
             }
         }
         return false
     }
+    
 
     internal  class  ViewPagerAdapter(fragmentManager: FragmentManager) : FragmentPagerAdapter(fragmentManager){
         private val fragments: ArrayList<Fragment> = ArrayList<Fragment>()

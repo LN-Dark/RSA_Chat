@@ -3,6 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/colorSoftDark"
     tools:context=".fragments.SearchFragment">
 
 
@@ -17,6 +18,7 @@
         android:id="@+id/recycler_search"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:background="@color/colorSoftDark"
         android:layout_below="@+id/txt_search"/>
 
 </RelativeLayout>

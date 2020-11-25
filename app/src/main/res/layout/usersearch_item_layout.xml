@@ -2,6 +2,11 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:background="@drawable/round_corners_chat_left"
+    android:backgroundTint="@color/colorPrimaryDark"
+    android:layout_marginBottom="7dp"
+    android:layout_marginStart="7dp"
+    android:layout_marginEnd="7dp"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <de.hdodenhof.circleimageview.CircleImageView
@@ -9,8 +14,11 @@
         android:layout_width="60dp"
         android:layout_height="60dp"
         android:src="@drawable/ic_person_24px"
-        android:tint="@android:color/white"
-        android:background="@drawable/ic_person_24px">
+        android:layout_marginTop="9dp"
+        android:layout_marginStart="7dp"
+        app:civ_border_width="1dp"
+        app:civ_border_color="@color/colorPrimaryDark"
+        android:tint="@android:color/white">
     </de.hdodenhof.circleimageview.CircleImageView>
 
     <TextView
@@ -31,7 +39,6 @@
         android:id="@+id/image_online_search"
         android:layout_width="19dp"
         android:layout_height="19dp"
-        android:src="@drawable/ic_person_24px"
         android:background="@color/green"
         app:civ_border_width="12dp"
         android:layout_below="@id/user_name_search"
@@ -39,14 +46,13 @@
         android:visibility="gone"
         android:layout_marginStart="-15dp"
         android:layout_toEndOf="@+id/profile_image_search"
-        android:layout_toRightOf="@id/user_name_search">
+        android:layout_toLeftOf="@id/user_name_search">
     </de.hdodenhof.circleimageview.CircleImageView>
 
     <de.hdodenhof.circleimageview.CircleImageView
         android:id="@+id/image_offline_search"
         android:layout_width="19dp"
         android:layout_height="19dp"
-        android:src="@drawable/ic_person_24px"
         android:background="@color/colorAccent"
         app:civ_border_width="12dp"
         android:layout_below="@id/user_name_search"

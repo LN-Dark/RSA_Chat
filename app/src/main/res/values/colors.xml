@@ -11,8 +11,16 @@
 
     <color name="colorPrimary">#344955</color>
     <color name="colorPrimaryDark">#232F34</color>
+    <color name="colorPrimaryDarker">#192225</color>
+    <color name="colorSoftDark">#101313</color>
     <color name="colorAccent">#4A6562</color>
     <color name="colorProfile">#F9AA33</color>
+
+    <color name="colorTransparent">#00F6F6F6</color>
+
+
+    <color name="colorChatLeft">#2A2C2C</color>
+    <color name="colorChatRight">#1E1D1B</color>
 
 
 </resources>

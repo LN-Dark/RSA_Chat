@@ -59,8 +59,8 @@ class RegisterActivity : AppCompatActivity() {
                     userHashMap["uid"] = firebaseUserId
                     userHashMap["username"] = username.text.toString()
                     userHashMap["email"] = email.text.toString()
-                    userHashMap["profile"] = "https://firebasestorage.googleapis.com/v0/b/rsachat-73eff.appspot.com/o/ic_person_black_24dp.png?alt=media&token=d3e8df62-7e21-43b8-9548-46992a2832af"
-                    userHashMap["cover"] = "https://firebasestorage.googleapis.com/v0/b/rsachat-73eff.appspot.com/o/coverdefault.jpg?alt=media&token=75a23002-0ef3-432c-bdff-1896e0a68a39"
+                    userHashMap["profile"] = "https://firebasestorage.googleapis.com/v0/b/rsachat-73eff.appspot.com/o/profile_1.png?alt=media&token=1eba6856-99ec-4d5f-9eed-47561c59f11c"
+                    userHashMap["cover"] = "https://firebasestorage.googleapis.com/v0/b/rsachat-73eff.appspot.com/o/coverdefault.jpg?alt=media&token=30312c5f-a8a2-4ed6-91ed-470d89c3a7bc"
                     userHashMap["status"] = "offline"
                     userHashMap["search"] = username.text.toString().toLowerCase()
                     userHashMap["facebook"] = "https://m.facebook.com"

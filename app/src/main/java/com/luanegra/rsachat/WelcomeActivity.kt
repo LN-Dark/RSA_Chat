@@ -94,7 +94,11 @@ class WelcomeActivity : AppCompatActivity() {
                     Toast.makeText(this@WelcomeActivity, "Error Message:  " + e.message, Toast.LENGTH_LONG).show()
                 }
             } else {
-                Toast.makeText(this@WelcomeActivity, "Error Message:  " + task.exception.toString(), Toast.LENGTH_LONG).show()
+                if(task.exception.toString().contains("125000") || task.exception.toString().contains("10")){
+                    Toast.makeText(this@WelcomeActivity, "Your Google Play Store don't let you sign in, please use the other method of Registration/LogIn", Toast.LENGTH_LONG).show()
+                }else{
+                    Toast.makeText(this@WelcomeActivity, "Error Message:  " + task.exception.toString(), Toast.LENGTH_LONG).show()
+                }
             }
         }
     }
@@ -111,7 +115,7 @@ class WelcomeActivity : AppCompatActivity() {
                         userHashMap["username"] = account.displayName.toString()
                         userHashMap["email"] = account.email.toString()
                         userHashMap["profile"] = account.photoUrl.toString()
-                        userHashMap["cover"] = "https://firebasestorage.googleapis.com/v0/b/rsachat-b3e19.appspot.com/o/coverdefault.jpg?alt=media&token=6390f5aa-8c4f-4ee0-8f19-57a04b8a98e8"
+                        userHashMap["cover"] = "https://firebasestorage.googleapis.com/v0/b/rsachat-73eff.appspot.com/o/coverdefault.jpg?alt=media&token=30312c5f-a8a2-4ed6-91ed-470d89c3a7bc"
                         userHashMap["status"] = "offline"
                         userHashMap["search"] = account.displayName.toString().toLowerCase()
                         userHashMap["facebook"] = "https://m.facebook.com"
