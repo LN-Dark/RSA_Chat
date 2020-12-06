@@ -67,7 +67,6 @@
         android:id="@+id/message_last_search"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="@string/username"
         android:textSize="19sp"
         android:layout_marginStart="20dp"
         android:textColor="@color/colorPrimaryDark"
@@ -76,8 +75,7 @@
         android:maxLines="1"
         android:layout_marginTop="14dp"
         android:padding="6dp"
-        android:layout_below="@id/user_name_search"
-        android:layout_marginLeft="20sp">
+        android:layout_below="@id/user_name_search">
     </TextView>
 
 </RelativeLayout>

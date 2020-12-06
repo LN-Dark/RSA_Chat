@@ -161,7 +161,7 @@ class SettingsFragment : Fragment() {
                 if(type == 0){
                     map["facebook"] = "https://m.facebook.com/$str"
                 }else if(type == 1){
-                    map["intagram"] = "https://m.instagram.com/$str"
+                    map["instagram"] = "https://m.instagram.com/$str"
                 }else if(type == 2){
                     map["website"] = "https://$str"
                 }

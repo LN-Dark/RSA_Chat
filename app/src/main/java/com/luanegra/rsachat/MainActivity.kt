@@ -20,9 +20,12 @@ import com.google.android.material.tabs.TabLayout
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.database.*
+import com.google.firebase.messaging.FirebaseMessaging
 import com.luanegra.rsachat.fragments.ChatFragment
 import com.luanegra.rsachat.fragments.SearchFragment
 import com.luanegra.rsachat.fragments.SettingsFragment
+import com.luanegra.rsachat.modelclasses.Chat
+import com.luanegra.rsachat.modelclasses.ChatList
 import com.luanegra.rsachat.modelclasses.Users
 import java.util.ArrayList
 
@@ -44,16 +47,37 @@ class MainActivity : AppCompatActivity() {
 
         val tableLayout: TabLayout = findViewById(R.id.tab_layout)
         val viewPager: ViewPager = findViewById(R.id.view_pager)
-        val viewPagerAdapter = ViewPagerAdapter(supportFragmentManager)
+
         val user_name: TextView = findViewById<TextView>(R.id.user_name)
         val profile_image: de.hdodenhof.circleimageview.CircleImageView = findViewById<de.hdodenhof.circleimageview.CircleImageView>(R.id.profile_image)
 
-        viewPagerAdapter.addFragment(ChatFragment(), "Chats")
-        viewPagerAdapter.addFragment(SearchFragment(), "Search")
-        viewPagerAdapter.addFragment(SettingsFragment(), "My Profile")
+        val chatListsRef = FirebaseDatabase.getInstance().reference.child("Chats")
+        chatListsRef.addValueEventListener(object : ValueEventListener{
+            override fun onDataChange(snapshot: DataSnapshot) {
+                val viewPagerAdapter = ViewPagerAdapter(supportFragmentManager)
+                var countUnread = 0
+                for(datasnap in snapshot.children){
+                    val chat = datasnap.getValue(Chat::class.java)
+                    if(chat!!.getreciever().equals(firebaseUser!!.uid) && !chat!!.getisseen()!!){
+                        countUnread += 1
+                    }
+                }
+                if(countUnread == 0){
+                    viewPagerAdapter.addFragment(ChatFragment(), "Chats")
+                }else{
+                    viewPagerAdapter.addFragment(ChatFragment(), "($countUnread) Chats")
+                }
+                viewPagerAdapter.addFragment(SearchFragment(), "Search")
+                viewPagerAdapter.addFragment(SettingsFragment(), "My Profile")
+                viewPager.adapter = viewPagerAdapter
+                tableLayout.setupWithViewPager(viewPager)
+            }
 
-        viewPager.adapter = viewPagerAdapter
-        tableLayout.setupWithViewPager(viewPager)
+            override fun onCancelled(error: DatabaseError) {
+
+            }
+
+        })
 
         refUsers!!.addValueEventListener(object : ValueEventListener{
             override fun onDataChange(snapshot: DataSnapshot) {
@@ -73,6 +97,7 @@ class MainActivity : AppCompatActivity() {
 
         })
     }
+
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
         menuInflater.inflate(R.menu.menu_main, menu)

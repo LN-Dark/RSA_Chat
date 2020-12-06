@@ -29,11 +29,11 @@ class Chat {
 
     constructor()
 
-    fun getUid(): String?{
+    fun getMessageid(): String?{
         return messageId
     }
 
-    fun setUid(uid: String){
+    fun setMessageid(messageId: String){
         this.messageId = messageId
     }
     fun getsender(): String?{

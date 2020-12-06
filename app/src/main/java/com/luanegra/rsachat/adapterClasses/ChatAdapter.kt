@@ -117,20 +117,24 @@ class ChatAdapter(mContext: Context, mChatList: List<Chat>, image_url: String) :
         }
 
         if(position == mChatList.size-1){
-            if(chat.getisseen()!!){
-                holder.text_seen.text = "${chat.gettimeStamp()} - Seen"
-                if(chat.getmessage().equals("sent you an image.") && !chat.geturl().equals("")){
-                    val lp: RelativeLayout.LayoutParams? = holder.text_seen.layoutParams as RelativeLayout.LayoutParams?
-                    lp!!.setMargins(0, 125, 10, 0)
-                    holder.text_seen.layoutParams = lp
+            if(getItemViewType(position) == 1){
+                if(chat.getisseen()!!){
+                    holder.text_seen.text = "${chat.gettimeStamp()} - Seen"
+                    if(chat.getmessage().equals("sent you an image.") && !chat.geturl().equals("")){
+                        val lp: RelativeLayout.LayoutParams? = holder.text_seen.layoutParams as RelativeLayout.LayoutParams?
+                        lp!!.setMargins(0, 125, 10, 0)
+                        holder.text_seen.layoutParams = lp
+                    }
+                }else{
+                    holder.text_seen.text = "${chat.gettimeStamp()} - Sent"
+                    if(chat.getmessage().equals("sent you an image.") && !chat.geturl().equals("")){
+                        val lp: RelativeLayout.LayoutParams? = holder.text_seen.layoutParams as RelativeLayout.LayoutParams?
+                        lp!!.setMargins(0, 125, 10, 0)
+                        holder.text_seen.layoutParams = lp
+                    }
                 }
             }else{
-                holder.text_seen.text = "${chat.gettimeStamp()} - Sent"
-                if(chat.getmessage().equals("sent you an image.") && !chat.geturl().equals("")){
-                    val lp: RelativeLayout.LayoutParams? = holder.text_seen.layoutParams as RelativeLayout.LayoutParams?
-                    lp!!.setMargins(0, 125, 10, 0)
-                    holder.text_seen.layoutParams = lp
-                }
+                holder.text_seen.text = "${chat.gettimeStamp()}"
             }
         }else{
             holder.text_seen.text = "${chat.gettimeStamp()}"

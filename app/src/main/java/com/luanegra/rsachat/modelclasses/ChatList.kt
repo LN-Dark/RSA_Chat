@@ -9,11 +9,11 @@ class ChatList {
         this.id = id
     }
 
-    fun getUid(): String?{
+    fun getid(): String?{
         return id
     }
 
-    fun setUid(uid: String){
+    fun setid(id: String){
         this.id = id
     }
 
