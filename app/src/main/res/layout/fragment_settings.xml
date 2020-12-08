@@ -44,7 +44,7 @@
              android:layout_margin="20dp"
              android:hint="@string/username"
              android:textColor="@color/colorProfile"
-             android:textColorHint="@color/colorPrimary"></EditText>
+             android:textColorHint="@color/colorPrimary"/>
 
       </RelativeLayout>
    </androidx.cardview.widget.CardView>
@@ -67,7 +67,7 @@
           android:layout_gravity="center"
           android:layout_marginTop="2dp"
           android:background="@drawable/ic_facebook"
-          android:scaleType="centerCrop"></ImageView>
+          android:scaleType="centerCrop"/>
 
       <ImageView
           android:id="@+id/instagram_settings"
@@ -78,7 +78,7 @@
           android:layout_marginTop="2dp"
           android:layout_marginEnd="15dp"
           android:background="@drawable/ic_instagram"
-          android:scaleType="centerCrop"></ImageView>
+          android:scaleType="centerCrop"/>
 
       <ImageView
           android:id="@+id/website_settings"
@@ -87,7 +87,7 @@
           android:layout_gravity="center"
           android:layout_marginTop="2dp"
           android:background="@drawable/website"
-          android:scaleType="centerCrop"></ImageView>
+          android:scaleType="centerCrop"/>
 
    </LinearLayout>
 

@@ -24,6 +24,7 @@ import com.luanegra.rsachat.ViewFullImageActivity
 import com.luanegra.rsachat.modelclasses.Chat
 import com.luanegra.rsachat.modelclasses.Users
 
+
 class ChatAdapter(mContext: Context, mChatList: List<Chat>, image_url: String) : RecyclerView.Adapter<ChatAdapter.ViewHolder?>() {
     private val mContext: Context
     private val mChatList: List<Chat>
@@ -121,7 +122,7 @@ class ChatAdapter(mContext: Context, mChatList: List<Chat>, image_url: String) :
                 holder.image_view.visibility = View.GONE
                 holder.message_chat.visibility = View.VISIBLE
                 holder.message_chat.text = chat.getmessage()
-                holder.image_view!!.setOnClickListener {
+                holder.message_chat!!.setOnClickListener {
                     val options = arrayOf<CharSequence>(
                         "Delete Message",
                         "Cancel"
@@ -142,8 +143,10 @@ class ChatAdapter(mContext: Context, mChatList: List<Chat>, image_url: String) :
             val userRef = FirebaseDatabase.getInstance().reference.child("users").child(firebaseUser!!.uid)
             userRef.addValueEventListener(object: ValueEventListener {
                 override fun onDataChange(snapshot: DataSnapshot) {
-                    val user: Users? = snapshot.getValue(Users::class.java)
-                    Glide.with(mContext).load(user!!.getprofile()).into(holder.profile_image_message)
+                    if(snapshot.exists()){
+                        val user: Users? = snapshot.getValue(Users::class.java)
+                        Glide.with(mContext).load(user!!.getprofile()).into(holder.profile_image_message)
+                    }
                 }
 
                 override fun onCancelled(error: DatabaseError) {
@@ -163,7 +166,7 @@ class ChatAdapter(mContext: Context, mChatList: List<Chat>, image_url: String) :
                         "View full Image",
                         "Cancel"
                     )
-                    var builder: androidx.appcompat.app.AlertDialog.Builder = androidx.appcompat.app.AlertDialog.Builder(holder.itemView.context)
+                    val builder: androidx.appcompat.app.AlertDialog.Builder = androidx.appcompat.app.AlertDialog.Builder(holder.itemView.context)
                     builder.setTitle("Choose an option:")
                     builder.setItems(options, DialogInterface.OnClickListener { dialog, which ->
                         if (which == 0) {
@@ -249,7 +252,7 @@ class ChatAdapter(mContext: Context, mChatList: List<Chat>, image_url: String) :
     }
 
     private fun deleteSentMessage(position: Int, holder: ViewHolder){
-        val ref = FirebaseDatabase.getInstance().reference.child("Chats").child(mChatList.get(position).getMessageid()!!).removeValue()
+        FirebaseDatabase.getInstance().reference.child("Chats").child(mChatList.get(position).getMessageid()!!).removeValue()
 
     }
 }

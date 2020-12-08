@@ -85,9 +85,6 @@ class MainActivity : AppCompatActivity() {
                     val user: Users? = snapshot.getValue(Users::class.java)
                     user_name.text = user!!.getusername()
                     Glide.with(applicationContext).load(user!!.getprofile()).placeholder(R.drawable.profile_1).into(profile_image)
-                    val map = HashMap<String, Any>()
-                    map["status"] = "on"
-                    refUsers!!.updateChildren(map)
                 }
             }
 
@@ -147,6 +144,24 @@ class MainActivity : AppCompatActivity() {
         override fun getPageTitle(position: Int): CharSequence? {
             return titles[position]
         }
+    }
 
+
+
+    private fun updateStatus(status: String){
+        val ref = FirebaseDatabase.getInstance().reference.child("users").child(firebaseUser!!.uid)
+        val userHashMap = HashMap<String, Any>()
+        userHashMap["status"] = status
+        ref.updateChildren(userHashMap)
+    }
+
+    override fun onResume() {
+        super.onResume()
+        updateStatus("online")
+    }
+
+    override fun onPause() {
+        super.onPause()
+        updateStatus("offline")
     }
 }

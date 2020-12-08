@@ -1,5 +1,6 @@
 package com.luanegra.rsachat.modelclasses
 
+
 class Chat {
     private var sender: String = ""
     private var reciever: String = ""

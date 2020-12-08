@@ -5,6 +5,9 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.ImageView
 import com.bumptech.glide.Glide
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.FirebaseUser
+import com.google.firebase.database.FirebaseDatabase
 
 class ViewFullImageActivity : AppCompatActivity() {
     private var image_view: ImageView? = null
@@ -12,6 +15,7 @@ class ViewFullImageActivity : AppCompatActivity() {
     private var reciever_id: String = ""
     private var reciever_profile: String = ""
     private var reciever_username: String = ""
+    var firebaseUser: FirebaseUser?= null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -21,7 +25,7 @@ class ViewFullImageActivity : AppCompatActivity() {
         reciever_id = intent.getStringExtra("reciever_id").toString()
         reciever_profile = intent.getStringExtra("reciever_profile").toString()
         reciever_username = intent.getStringExtra("reciever_username").toString()
-
+        firebaseUser = FirebaseAuth.getInstance().currentUser
         val toolbar: androidx.appcompat.widget.Toolbar = findViewById(R.id.toolbar_viewfullimage)
         setSupportActionBar(toolbar)
         supportActionBar!!.title = "Image from $reciever_username"
@@ -35,5 +39,22 @@ class ViewFullImageActivity : AppCompatActivity() {
             finish()
         }
         Glide.with(this).load(image_url).into(image_view!!)
+    }
+
+    private fun updateStatus(status: String){
+        val ref = FirebaseDatabase.getInstance().reference.child("users").child(firebaseUser!!.uid)
+        val userHashMap = HashMap<String, Any>()
+        userHashMap["status"] = status
+        ref.updateChildren(userHashMap)
+    }
+
+    override fun onResume() {
+        super.onResume()
+        updateStatus("online")
+    }
+
+    override fun onPause() {
+        super.onPause()
+        updateStatus("offline")
     }
 }

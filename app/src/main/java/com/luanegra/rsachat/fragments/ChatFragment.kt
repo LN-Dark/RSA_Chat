@@ -16,7 +16,6 @@ import com.google.firebase.database.ValueEventListener
 import com.google.firebase.iid.FirebaseInstanceId
 import com.luanegra.rsachat.R
 import com.luanegra.rsachat.adapterClasses.UserAdapter
-import com.luanegra.rsachat.modelclasses.Chat
 import com.luanegra.rsachat.modelclasses.ChatList
 import com.luanegra.rsachat.modelclasses.Users
 import com.luanegra.rsachat.notifications.Token
@@ -83,9 +82,7 @@ class ChatFragment : Fragment() {
                         if(user!!.getUid().equals(eachChatList.getid())){
                             (mUsers as ArrayList).add(user!!)
                         }
-
                     }
-
                 }
                 userAdapter = UserAdapter(context!!, (mUsers as ArrayList<Users>), true)
                 recycler_chats.adapter = userAdapter

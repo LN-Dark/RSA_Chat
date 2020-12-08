@@ -16,8 +16,9 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.RSAChat">
-        <activity android:name=".ViewFullImageActivity"></activity>
-        <activity android:name=".MessageChatActivity" />
+        <activity android:name=".VisitProfileActivity"/>
+        <activity android:name=".ViewFullImageActivity" />
+        <activity android:name=".MessageChatActivity"/>
         <activity android:name=".WelcomeActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -30,6 +31,7 @@
         <activity
             android:name=".MainActivity"
             android:label="@string/app_name"
+            android:screenOrientation="portrait"
             android:theme="@style/Theme.RSAChat.NoActionBar" />
 
         <service

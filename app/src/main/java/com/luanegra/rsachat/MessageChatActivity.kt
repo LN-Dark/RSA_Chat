@@ -58,9 +58,6 @@ class MessageChatActivity : AppCompatActivity() {
         supportActionBar!!.title = ""
         supportActionBar!!.setDisplayHomeAsUpEnabled(true)
         toolbar.setNavigationOnClickListener {
-            val intent = Intent(this@MessageChatActivity, WelcomeActivity::class.java)
-            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK)
-            startActivity(intent)
             finish()
         }
         apiService = Client.Client.getClient("https://fcm.googleapis.com/")!!.create(APIService::class.java)
@@ -76,7 +73,7 @@ class MessageChatActivity : AppCompatActivity() {
         val btn_atach_image: ImageView = findViewById(R.id.atach_image_messagechat)
         recycler_messagechat = findViewById(R.id.recycler_messagechat)
         recycler_messagechat.setHasFixedSize(true)
-        var linearLayoutManager = LinearLayoutManager(applicationContext)
+        val linearLayoutManager = LinearLayoutManager(applicationContext)
         linearLayoutManager.stackFromEnd = true
         recycler_messagechat.layoutManager = linearLayoutManager
         btn_atach_image.setOnClickListener {
@@ -124,7 +121,7 @@ class MessageChatActivity : AppCompatActivity() {
                     if(chat!!.getreciever().equals(receiverID) && chat!!.getsender().equals(senderId) || chat!!.getreciever().equals(senderId) && chat!!.getsender().equals(receiverID)){
                             (mChatList as ArrayList<Chat>).add(chat)
                     }
-                    chatsAdapter = ChatAdapter(this@MessageChatActivity, (mChatList as ArrayList<Chat>), receiverImageUrl.toString())
+                    chatsAdapter = ChatAdapter(applicationContext, (mChatList as ArrayList<Chat>), receiverImageUrl.toString())
                     recycler_messagechat.adapter = chatsAdapter
                 }
             }
@@ -181,7 +178,7 @@ class MessageChatActivity : AppCompatActivity() {
             override fun onDataChange(snapshot: DataSnapshot) {
                 val user = snapshot.getValue(Users::class.java)
                 if(notify){
-                    sendNotification(recieverId, user!!.getusername(), message)
+                    sendNotification(recieverId, user!!.getusername(), textEnc)
                 }
                 notify = false
 
@@ -324,6 +321,7 @@ class MessageChatActivity : AppCompatActivity() {
     override fun onPause() {
         super.onPause()
         userRecieverRef!!.removeEventListener(seenListener!!)
+        updateStatus("offline")
     }
 
     fun encryptMessage(message: String, publicKey: String): String{
@@ -331,5 +329,16 @@ class MessageChatActivity : AppCompatActivity() {
         return encryptedString.toString()
     }
 
+    private fun updateStatus(status: String){
+        val ref = FirebaseDatabase.getInstance().reference.child("users").child(firebaseUser!!.uid)
+        val userHashMap = HashMap<String, Any>()
+        userHashMap["status"] = status
+        ref.updateChildren(userHashMap)
+    }
+
+    override fun onResume() {
+        super.onResume()
+        updateStatus("online")
+    }
 
 }

@@ -43,6 +43,7 @@
         android:layout_below="@+id/profile_image_message"
         android:text="seen"
         android:textSize="12sp"
+        android:layout_marginTop="15dp"
         android:layout_marginStart="10dp"
         >
     </TextView>

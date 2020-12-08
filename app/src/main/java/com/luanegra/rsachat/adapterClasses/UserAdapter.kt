@@ -3,33 +3,34 @@ package com.luanegra.rsachat.adapterClasses
 import android.app.AlertDialog
 import android.content.Context
 import android.content.Intent
-import android.graphics.drawable.Drawable
-import android.util.DisplayMetrics
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.view.WindowManager
 import android.widget.Button
-import android.widget.LinearLayout
-import android.widget.RelativeLayout
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
-import com.bumptech.glide.request.target.SimpleTarget
-import com.bumptech.glide.request.transition.Transition
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.database.DataSnapshot
+import com.google.firebase.database.DatabaseError
+import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.database.ValueEventListener
 import com.luanegra.rsachat.MessageChatActivity
 import com.luanegra.rsachat.R
+import com.luanegra.rsachat.RSA.DecryptGenerator
+import com.luanegra.rsachat.VisitProfileActivity
+import com.luanegra.rsachat.modelclasses.Chat
 import com.luanegra.rsachat.modelclasses.Users
 
 
 
 class UserAdapter(mContext: Context, mUserList: List<Users>, isChatCheck: Boolean) : RecyclerView.Adapter<UserAdapter.ViewHolder?>() {
-    private val mContext: Context
+    private val mContext = mContext
     private val mUserList: List<Users>
     private var isChatCheck: Boolean
+    private var lastMsg: String = ""
 
     init {
-        this.mContext = mContext
         this.mUserList = mUserList
         this.isChatCheck = isChatCheck
     }
@@ -79,6 +80,9 @@ class UserAdapter(mContext: Context, mUserList: List<Users>, isChatCheck: Boolea
             )
 
             mDialogView.findViewById<Button>(R.id.perfil_dialog_show).setOnClickListener {
+                val intent = Intent(mContext, VisitProfileActivity::class.java)
+                intent.putExtra("reciever_id", user!!.getUid())
+                mContext.startActivity(intent)
                 mAlertDialog.dismiss()
             }
 
@@ -93,13 +97,69 @@ class UserAdapter(mContext: Context, mUserList: List<Users>, isChatCheck: Boolea
 
         }
 
-        if(user.getstatus() == "off"){
-           // holder.image_online.visibility =
-
+        if(isChatCheck){
+           retrieveLasMessage(user.getUid(), holder.txt_lastMessage, mUserList[position].getusername())
         }else{
-           // holder.image_offline.visibility =
-
+          holder.txt_lastMessage.visibility = View.GONE
         }
+
+        if(user.getstatus().equals("online")){
+            holder.image_online.visibility = View.VISIBLE
+            holder.image_offline.visibility = View.GONE
+        }else{
+            holder.image_online.visibility = View.GONE
+            holder.image_offline.visibility = View.VISIBLE
+        }
+    }
+
+    private fun retrieveLasMessage(uid: String?, txtLastmessage: TextView, recieverUserName: String?) {
+        lastMsg = "defaultMsg"
+        val firebaseUser = FirebaseAuth.getInstance().currentUser
+        val reference = FirebaseDatabase.getInstance().reference
+        reference.child("Chats").addValueEventListener(object: ValueEventListener{
+            override fun onDataChange(snapshot: DataSnapshot) {
+                for(dataSnapshot in snapshot.children){
+                    var chat: Chat? = dataSnapshot.getValue(Chat::class.java)
+                    if(firebaseUser != null && chat != null){
+                        if(chat.getreciever() == firebaseUser!!.uid && chat.getsender() == uid || chat.getreciever() == uid && chat.getsender() == firebaseUser!!.uid){
+                            if(chat.getsender().equals(firebaseUser!!.uid)){
+                                chat = decryptMessage(chat, 0)
+                                chat.setmessage("me: " + chat.getmessage())
+                            }else{
+                                chat = decryptMessage(chat, 1)
+                                chat.setmessage(recieverUserName + ": " + chat.getmessage())
+                            }
+                            lastMsg = chat.getmessage()!!
+                        }
+                    }
+                }
+                when(lastMsg){
+                    "defaultMsg" -> txtLastmessage.text = "No Message"
+                    "sent you an image." -> txtLastmessage.text = "Image sent."
+                    else -> txtLastmessage.text = lastMsg
+                }
+                lastMsg = "defaultMsg"
+            }
+
+            override fun onCancelled(error: DatabaseError) {
+
+            }
+
+        })
+
+    }
+
+    fun decryptMessage(chat: Chat, who: Int): Chat {
+        if(who == 0){
+            val sharedPreference =  mContext.getSharedPreferences("RSA_CHAT", Context.MODE_PRIVATE)
+            chat.setmessage(sharedPreference.getString(chat.getMessageid(), "").toString())
+        }else{
+            val sharedPreference =  mContext.getSharedPreferences("RSA_CHAT", Context.MODE_PRIVATE)
+            val plainText = chat.getmessage()?.let { DecryptGenerator.generateDecrypt(encryptText = it, privateKey = sharedPreference.getString("privateKey","")) }
+            chat.setmessage(plainText!!.toString())
+        }
+
+        return chat
     }
 
     override fun getItemCount(): Int {

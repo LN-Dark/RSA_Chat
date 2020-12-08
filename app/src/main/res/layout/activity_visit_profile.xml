@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/colorSoftDark"
+    tools:context=".VisitProfileActivity">
+
+    <com.google.android.material.appbar.AppBarLayout
+        android:id="@+id/barlayout_visitprofile"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        android:theme="@style/Theme.RSAChat.AppBarOverlay">
+
+        <androidx.appcompat.widget.Toolbar
+            android:id="@+id/toolbar_visitprofile"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/colorPrimaryDarker"
+            app:popupTheme="@style/Theme.RSAChat.PopupOverlay">
+        </androidx.appcompat.widget.Toolbar>
+    </com.google.android.material.appbar.AppBarLayout>
+
+    <androidx.cardview.widget.CardView
+        android:id="@+id/card_visitprofile"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/barlayout_visitprofile">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/colorPrimaryDarker">
+
+            <ImageView
+                android:id="@+id/cover_visitprofile"
+                android:layout_width="match_parent"
+                android:layout_height="200dp"
+                android:scaleType="centerCrop"
+                android:src="@drawable/coverdefault" />
+
+            <de.hdodenhof.circleimageview.CircleImageView
+                android:id="@+id/profileimage_visitprofile"
+                android:layout_width="150dp"
+                android:layout_height="150dp"
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="140dp"
+                android:scaleType="centerCrop"
+                android:src="@drawable/profile_1" />
+
+        </RelativeLayout>
+    </androidx.cardview.widget.CardView>
+
+    <LinearLayout
+        android:id="@+id/linearLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/card_visitprofile"
+        android:background="@color/colorProfile"
+        android:gravity="center"
+        android:orientation="horizontal"
+        android:padding="6dp"
+        app:layout_constraintBottom_toTopOf="@+id/button_sendmessageUser"
+        app:layout_constraintTop_toBottomOf="@+id/card_visitprofile">
+
+        <ImageView
+            android:id="@+id/facebook_visitprofile"
+            android:layout_width="60dp"
+            android:layout_height="60dp"
+            android:layout_gravity="center"
+            android:layout_marginTop="2dp"
+            android:background="@drawable/ic_facebook"
+            android:scaleType="centerCrop" />
+
+        <ImageView
+            android:id="@+id/instagram_visitprofile"
+            android:layout_width="60dp"
+            android:layout_height="60dp"
+            android:layout_gravity="center"
+            android:layout_marginStart="15dp"
+            android:layout_marginTop="2dp"
+            android:layout_marginEnd="15dp"
+            android:background="@drawable/ic_instagram"
+            android:scaleType="centerCrop" />
+
+        <ImageView
+            android:id="@+id/website_visitprofile"
+            android:layout_width="60dp"
+            android:layout_height="60dp"
+            android:layout_gravity="center"
+            android:layout_marginTop="2dp"
+            android:background="@drawable/website"
+            android:scaleType="centerCrop" />
+
+    </LinearLayout>
+
+    <Button
+        android:id="@+id/button_sendmessageUser"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="15dp"
+        android:text="Send Message"
+        app:layout_constraintBottom_toBottomOf="parent"
+        />
+
+</androidx.constraintlayout.widget.ConstraintLayout>
