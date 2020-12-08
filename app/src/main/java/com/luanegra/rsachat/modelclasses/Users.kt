@@ -11,6 +11,7 @@ class Users {
     private var facebook: String = ""
     private var instagram: String = ""
     private var website: String = ""
+    private var publicKey: String = ""
 
 
 
@@ -24,7 +25,8 @@ class Users {
         search: String,
         facebook: String,
         instagram: String,
-        website: String
+        website: String,
+        publicKey: String
     ) {
         this.uid = uid
         this.username = username
@@ -36,6 +38,7 @@ class Users {
         this.facebook = facebook
         this.instagram = instagram
         this.website = website
+        this.publicKey = publicKey
     }
 
     constructor()
@@ -111,6 +114,14 @@ class Users {
 
     fun setwebsite(website: String){
         this.website = website
+    }
+
+    fun getpublicKey(): String?{
+        return publicKey
+    }
+
+    fun setpublicKey(publicKey: String){
+        this.publicKey = publicKey
     }
 
 }

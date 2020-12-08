@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".ViewFullImageActivity">
+    <com.google.android.material.appbar.AppBarLayout
+        android:id="@+id/toolbar_fullimage"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:theme="@style/Theme.RSAChat.AppBarOverlay">
+
+        <androidx.appcompat.widget.Toolbar
+            android:id="@+id/toolbar_viewfullimage"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/colorPrimaryDarker"
+            app:popupTheme="@style/Theme.RSAChat.PopupOverlay">
+        </androidx.appcompat.widget.Toolbar>
+    </com.google.android.material.appbar.AppBarLayout>
+
+    <ImageView
+        android:id="@+id/viewfullimage"
+        android:layout_width="match_parent"
+        android:layout_below="@+id/toolbar_fullimage"
+        android:layout_height="match_parent">
+
+    </ImageView>
+
+</RelativeLayout>

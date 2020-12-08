@@ -9,6 +9,8 @@ class Chat {
     private var messageId: String = ""
     private var url: String = ""
 
+
+
     constructor(
         sender: String,
         reciever: String,
@@ -25,6 +27,7 @@ class Chat {
         this.isseen = isseen
         this.messageId = messageId
         this.url = url
+
     }
 
     constructor()
@@ -78,13 +81,5 @@ class Chat {
     fun seturl(url: String){
         this.url = url
     }
-
-
-
-
-
-
-
-
 
 }

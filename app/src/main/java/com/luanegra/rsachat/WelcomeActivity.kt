@@ -1,5 +1,6 @@
 package com.luanegra.rsachat
 
+import android.content.Context
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
@@ -19,6 +20,7 @@ import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.auth.GoogleAuthProvider
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
+import com.luanegra.rsachat.RSA.GenerateKeys
 
 class WelcomeActivity : AppCompatActivity() {
 
@@ -121,7 +123,17 @@ class WelcomeActivity : AppCompatActivity() {
                         userHashMap["facebook"] = "https://m.facebook.com"
                         userHashMap["instagram"] = "https://m.instagram.com"
                         userHashMap["website"] = "https://www.google.pt"
+                        val gerarChaves = GenerateKeys()
+                        var listKeys: List<String>?
+                        listKeys = ArrayList()
+                        listKeys = gerarChaves.generateKeys()
+                        userHashMap["publicKey"] = listKeys.get(0)
 
+                        val sharedPreference =  getSharedPreferences("RSA_CHAT", Context.MODE_PRIVATE)
+                        val editor = sharedPreference.edit()
+                        editor.putString("privateKey",listKeys.get(1))
+                        editor.putString("publicKey",listKeys.get(0))
+                        editor.apply()
                         refUsers.updateChildren(userHashMap).addOnCompleteListener { task ->
                             if(task.isSuccessful){
                                 val intent = Intent(this@WelcomeActivity, MainActivity::class.java)

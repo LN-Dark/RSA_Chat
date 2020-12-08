@@ -2,6 +2,7 @@ package com.luanegra.rsachat.adapterClasses
 
 import android.app.AlertDialog
 import android.content.Context
+import android.content.DialogInterface
 import android.content.Intent
 import android.opengl.Visibility
 import android.view.LayoutInflater
@@ -15,8 +16,11 @@ import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
+import com.luanegra.rsachat.MainActivity
 import com.luanegra.rsachat.MessageChatActivity
 import com.luanegra.rsachat.R
+import com.luanegra.rsachat.RSA.DecryptGenerator
+import com.luanegra.rsachat.ViewFullImageActivity
 import com.luanegra.rsachat.modelclasses.Chat
 import com.luanegra.rsachat.modelclasses.Users
 
@@ -68,16 +72,72 @@ class ChatAdapter(mContext: Context, mChatList: List<Chat>, image_url: String) :
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        val chat: Chat = mChatList[position]
+        var chat: Chat = mChatList[position]
         if(chat.getsender().equals(firebaseUser!!.uid)){
+            chat = decryptMessage(chat, 0)
             if(chat.getmessage().equals("sent you an image.") && !chat.geturl().equals("")){
                 holder.image_view.visibility = View.VISIBLE
                 holder.message_chat.visibility = View.GONE
                 Glide.with(mContext).load(chat.geturl()).into(holder.image_view)
+                holder.image_view!!.setOnClickListener {
+                    val options = arrayOf<CharSequence>(
+                        "View full Image",
+                        "Delete Image",
+                        "Cancel"
+                    )
+                    val builder: androidx.appcompat.app.AlertDialog.Builder = androidx.appcompat.app.AlertDialog.Builder(holder.itemView.context)
+                    builder.setTitle("Choose an option:")
+                    builder.setItems(options, DialogInterface.OnClickListener { dialog, which ->
+                        if (which == 0) {
+                            val intent = Intent(mContext, ViewFullImageActivity::class.java)
+                            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK)
+                            val userRef = FirebaseDatabase.getInstance().reference.child("users").child(chat!!.getreciever().toString())
+                            userRef.addValueEventListener(object: ValueEventListener {
+                                override fun onDataChange(snapshot: DataSnapshot) {
+                                    val user: Users? = snapshot.getValue(Users::class.java)
+                                    intent.putExtra("url", chat.geturl())
+                                    intent.putExtra("reciever_id", chat!!.getreciever())
+                                    intent.putExtra("reciever_profile", user!!.getprofile())
+                                    intent.putExtra("reciever_username", user!!.getusername())
+                                    mContext.startActivity(intent)
+                                }
+
+                                override fun onCancelled(error: DatabaseError) {
+
+                                }
+
+                            })
+                        } else if (which == 1) {
+                            deleteSentMessage(position, holder)
+                        } else if (which == 2) {
+                            dialog.dismiss()
+
+                        }
+                    })
+                    builder.show()
+                }
+
             }else{
                 holder.image_view.visibility = View.GONE
                 holder.message_chat.visibility = View.VISIBLE
                 holder.message_chat.text = chat.getmessage()
+                holder.image_view!!.setOnClickListener {
+                    val options = arrayOf<CharSequence>(
+                        "Delete Message",
+                        "Cancel"
+                    )
+                    val builder: androidx.appcompat.app.AlertDialog.Builder = androidx.appcompat.app.AlertDialog.Builder(holder.itemView.context)
+                    builder.setTitle("Choose an option:")
+                    builder.setItems(options, DialogInterface.OnClickListener { dialog, which ->
+                        if (which == 0) {
+                            deleteSentMessage(position, holder)
+                        } else if (which == 1) {
+                            dialog.dismiss()
+
+                        }
+                    })
+                    builder.show()
+                }
             }
             val userRef = FirebaseDatabase.getInstance().reference.child("users").child(firebaseUser!!.uid)
             userRef.addValueEventListener(object: ValueEventListener {
@@ -93,10 +153,31 @@ class ChatAdapter(mContext: Context, mChatList: List<Chat>, image_url: String) :
             })
 
         }else{
+            chat = decryptMessage(chat, 1)
             if(chat.getmessage().equals("sent you an image.") && !chat.geturl().equals("")){
                 holder.image_view.visibility = View.VISIBLE
                 holder.message_chat.visibility = View.GONE
                 Glide.with(mContext).load(chat.geturl()).into(holder.image_view)
+                holder.image_view!!.setOnClickListener {
+                    val options = arrayOf<CharSequence>(
+                        "View full Image",
+                        "Cancel"
+                    )
+                    var builder: androidx.appcompat.app.AlertDialog.Builder = androidx.appcompat.app.AlertDialog.Builder(holder.itemView.context)
+                    builder.setTitle("Choose an option:")
+                    builder.setItems(options, DialogInterface.OnClickListener { dialog, which ->
+                        if (which == 0) {
+                            val intent = Intent(mContext, ViewFullImageActivity::class.java)
+                            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK)
+                            intent.putExtra("url", chat.geturl())
+                            mContext.startActivity(intent)
+                        } else if (which == 1) {
+                            dialog.dismiss()
+
+                        }
+                    })
+                    builder.show()
+                }
             }else{
                 holder.image_view.visibility = View.GONE
                 holder.message_chat.visibility = View.VISIBLE
@@ -152,5 +233,23 @@ class ChatAdapter(mContext: Context, mChatList: List<Chat>, image_url: String) :
         }else{
             0
         }
+    }
+
+    fun decryptMessage(chat: Chat, who: Int): Chat{
+        if(who == 0){
+            val sharedPreference =  mContext.getSharedPreferences("RSA_CHAT", Context.MODE_PRIVATE)
+            chat.setmessage(sharedPreference.getString(chat.getMessageid(), "").toString())
+        }else{
+            val sharedPreference =  mContext.getSharedPreferences("RSA_CHAT", Context.MODE_PRIVATE)
+            val plainText = chat.getmessage()?.let { DecryptGenerator.generateDecrypt(encryptText = it, privateKey = sharedPreference.getString("privateKey","")) }
+            chat.setmessage(plainText!!.toString())
+        }
+
+        return chat
+    }
+
+    private fun deleteSentMessage(position: Int, holder: ViewHolder){
+        val ref = FirebaseDatabase.getInstance().reference.child("Chats").child(mChatList.get(position).getMessageid()!!).removeValue()
+
     }
 }
