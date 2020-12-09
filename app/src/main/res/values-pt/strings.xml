@@ -44,4 +44,12 @@
     <string name="imagefrom">Imagem de&#160;"</string>
     <string name="viewfullimage">Abrir imagem</string>
     <string name="deletemessage">Apagar mensagem</string>
+    <string name="close">Fechar</string>
+    <string name="chooseanoption">Escolhe uma opção:</string>
+    <string name="block">Bloquear</string>
+    <string name="unblockeduser">Desbloqueado&#160;</string>
+    <string name="blockeduser">Bloqueado&#160;</string>
+    <string name="youareblockedby">Estas bloqueado por&#160;</string>
+    <string name="yourareblocked">Estas bloqueado</string>
+    <string name="unblock">Desbloquear</string>
 </resources>

@@ -22,6 +22,7 @@ import com.google.firebase.storage.UploadTask
 import com.luanegra.rsachat.RSA.EncryptGenerator
 import com.luanegra.rsachat.adapterClasses.ChatAdapter
 import com.luanegra.rsachat.fragments.APIService
+import com.luanegra.rsachat.modelclasses.Blocked
 import com.luanegra.rsachat.modelclasses.Chat
 import com.luanegra.rsachat.modelclasses.Users
 import com.luanegra.rsachat.notifications.*
@@ -42,6 +43,7 @@ class MessageChatActivity : AppCompatActivity() {
     var notify = false
     var apiService: APIService? = null
     var publicKeyVisit: String = ""
+    var recieverName: String = ""
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -74,6 +76,35 @@ class MessageChatActivity : AppCompatActivity() {
         val linearLayoutManager = LinearLayoutManager(this)
         linearLayoutManager.stackFromEnd = true
         recycler_messagechat.layoutManager = linearLayoutManager
+        val refblockedUsers = FirebaseDatabase.getInstance().reference.child("BlockedUsers").child(userIdVisit)
+        refblockedUsers.addValueEventListener(object: ValueEventListener{
+            override fun onDataChange(snapshot: DataSnapshot) {
+                if (snapshot.exists()){
+                    for(dataSnapshot in snapshot.children){
+                        val userID: Blocked? = dataSnapshot.getValue(Blocked::class.java)
+                        if(userID!!.getuserID() == firebaseUser!!.uid){
+                            write_messagechat.setText(getString(R.string.yourareblocked))
+                            write_messagechat.isEnabled = false
+                            send_messagechat.isEnabled = false
+                            btn_atach_image.isEnabled = false
+                        }
+                    }
+                }else{
+                    write_messagechat.isEnabled = true
+                    send_messagechat.isEnabled = true
+                    btn_atach_image.isEnabled = true
+                }
+            }
+
+            override fun onCancelled(error: DatabaseError) {
+
+            }
+
+        })
+
+
+
+
         btn_atach_image.setOnClickListener {
             val intent = Intent()
             intent.action = Intent.ACTION_GET_CONTENT
@@ -87,6 +118,7 @@ class MessageChatActivity : AppCompatActivity() {
             val user: Users? = snapshot.getValue(Users::class.java)
                 reciever_profileImage.load(user!!.getprofile())
                 reciever_UserName.text = user.getusername()
+                recieverName = user.getusername().toString()
                 send_messagechat.setOnClickListener{
                     if(!write_messagechat.text.toString().equals("")){
                         notify = true
@@ -156,11 +188,11 @@ class MessageChatActivity : AppCompatActivity() {
                 val chatListsRef = FirebaseDatabase.getInstance().reference.child("ChatLists").child(firebaseUser!!.uid).child(userIdVisit)
                 chatListsRef.addListenerForSingleValueEvent(object: ValueEventListener{
                     override fun onDataChange(snapshot: DataSnapshot) {
-                       if(!snapshot.exists()){
-                           chatListsRef.child("id").setValue(userIdVisit)
-                           val chatListsRecieverRef = FirebaseDatabase.getInstance().reference.child("ChatLists").child(userIdVisit).child(firebaseUser!!.uid)
-                           chatListsRecieverRef.child("id").setValue(firebaseUser!!.uid)
-                       }
+                        if(!snapshot.exists()){
+                            chatListsRef.child("id").setValue(userIdVisit)
+                            val chatListsRecieverRef = FirebaseDatabase.getInstance().reference.child("ChatLists").child(userIdVisit).child(firebaseUser!!.uid)
+                            chatListsRecieverRef.child("id").setValue(firebaseUser!!.uid)
+                        }
                     }
 
                     override fun onCancelled(error: DatabaseError) {
@@ -186,6 +218,7 @@ class MessageChatActivity : AppCompatActivity() {
             }
 
         })
+
     }
 
     private fun sendNotification(recieverId: String, getusername: String?, message: String) {

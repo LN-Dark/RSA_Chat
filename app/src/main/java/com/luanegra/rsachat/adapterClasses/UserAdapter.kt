@@ -8,6 +8,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.TextView
+import android.widget.Toast
 import androidx.recyclerview.widget.RecyclerView
 import coil.load
 import com.google.firebase.auth.FirebaseAuth
@@ -19,6 +20,7 @@ import com.luanegra.rsachat.MessageChatActivity
 import com.luanegra.rsachat.R
 import com.luanegra.rsachat.RSA.DecryptGenerator
 import com.luanegra.rsachat.VisitProfileActivity
+import com.luanegra.rsachat.modelclasses.Blocked
 import com.luanegra.rsachat.modelclasses.Chat
 import com.luanegra.rsachat.modelclasses.Users
 import de.hdodenhof.circleimageview.CircleImageView
@@ -85,7 +87,37 @@ class UserAdapter(mContext: Context, mUserList: List<Users>, isChatCheck: Boolea
                 mContext.startActivity(intent)
                 mAlertDialog.dismiss()
             }
+            var controllerBlock = 0
+            val firebaseUser = FirebaseAuth.getInstance().currentUser
+            val refblockedUsers = FirebaseDatabase.getInstance().reference.child("BlockedUsers").child(firebaseUser!!.uid)
+            refblockedUsers.addListenerForSingleValueEvent(object: ValueEventListener{
+                override fun onDataChange(snapshot: DataSnapshot) {
+                    if (snapshot.exists()){
+                        for(dataSnapshot in snapshot.children){
+                            val userID: Blocked? = dataSnapshot.getValue(Blocked::class.java)
+                            if(userID!!.getuserID() == user.getUid().toString()){
+                                controllerBlock = 1
+                            }
+                        }
+                        if(controllerBlock == 0){
+                            mDialogView.findViewById<Button>(R.id.chat_block).setText(mContext.getString(R.string.block))
+                        }else{
+                            mDialogView.findViewById<Button>(R.id.chat_block).setText(mContext.getString(R.string.unblock))
+                        }
+                    }else{
+                        mDialogView.findViewById<Button>(R.id.chat_block).setText(mContext.getString(R.string.block))
+                    }
+                }
 
+                override fun onCancelled(error: DatabaseError) {
+
+                }
+
+            })
+            mDialogView.findViewById<Button>(R.id.chat_block).setOnClickListener {
+                blockUser(user.getUid().toString(), user.getusername().toString())
+                mAlertDialog.dismiss()
+            }
             mDialogView.findViewById<Button>(R.id.chat_dialog_show).setOnClickListener {
                 val intent = Intent(mContext, MessageChatActivity::class.java)
                 intent.putExtra("reciever_id", user.getUid())
@@ -94,7 +126,6 @@ class UserAdapter(mContext: Context, mUserList: List<Users>, isChatCheck: Boolea
                 mContext.startActivity(intent)
                 mAlertDialog.dismiss()
             }
-
         }
 
         if(isChatCheck){
@@ -109,6 +140,48 @@ class UserAdapter(mContext: Context, mUserList: List<Users>, isChatCheck: Boolea
             holder.image_online.visibility = View.GONE
             holder.image_offline.visibility = View.VISIBLE
         }
+    }
+
+    private fun blockUser(usertoblock: String, username: String){
+        val firebaseUser = FirebaseAuth.getInstance().currentUser
+        val refblockedUsers = FirebaseDatabase.getInstance().reference.child("BlockedUsers").child(firebaseUser!!.uid)
+        var controllerBlock = 0
+        refblockedUsers.addListenerForSingleValueEvent(object: ValueEventListener{
+            override fun onDataChange(snapshot: DataSnapshot) {
+                if (snapshot.exists()){
+                    for(dataSnapshot in snapshot.children){
+                        val userID: Blocked? = dataSnapshot.getValue(Blocked::class.java)
+                        if(userID!!.getuserID() == usertoblock){
+                            FirebaseDatabase.getInstance().reference.child("BlockedUsers").child(firebaseUser!!.uid).child(userID.getuid().toString()).removeValue()
+                            controllerBlock = 1
+                            Toast.makeText(mContext, mContext.getString(R.string.unblockeduser) + username, Toast.LENGTH_LONG).show()
+                        }
+                    }
+                    if(controllerBlock == 0){
+                        val userHashMap = HashMap<String, Any>()
+                        val idBlock = refblockedUsers.push().key.toString()
+                        userHashMap["uid"] = idBlock
+                        userHashMap["userID"] = usertoblock
+                        userHashMap["conditionBlock"] = "true"
+                        FirebaseDatabase.getInstance().reference.child("BlockedUsers").child(firebaseUser!!.uid).child(idBlock).updateChildren(userHashMap)
+                        Toast.makeText(mContext, mContext.getString(R.string.blockeduser) + username, Toast.LENGTH_LONG).show()
+                    }
+                }else{
+                    val userHashMap = HashMap<String, Any>()
+                    val idBlock = refblockedUsers.push().key.toString()
+                    userHashMap["uid"] = idBlock
+                    userHashMap["userID"] = usertoblock
+                    userHashMap["conditionBlock"] = "true"
+                    FirebaseDatabase.getInstance().reference.child("BlockedUsers").child(firebaseUser!!.uid).child(idBlock).updateChildren(userHashMap)
+                    Toast.makeText(mContext, mContext.getString(R.string.blockeduser) + username, Toast.LENGTH_LONG).show()
+                }
+            }
+
+            override fun onCancelled(error: DatabaseError) {
+
+            }
+
+        })
     }
 
     private fun retrieveLasMessage(uid: String?, txtLastmessage: TextView, recieverUserName: String?) {

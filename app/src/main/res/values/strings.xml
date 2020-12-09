@@ -45,4 +45,10 @@
     <string name="deletemessage">Delete Message</string>
     <string name="close">Close</string>
     <string name="chooseanoption">Choose an option:</string>
+    <string name="block">Block</string>
+    <string name="unblockeduser">Unblocked user&#160;</string>
+    <string name="blockeduser">Blocked user&#160;</string>
+    <string name="youareblockedby">You are blocked by&#160;</string>
+    <string name="yourareblocked">You are blocked</string>
+    <string name="unblock">Unblock</string>
 </resources>
