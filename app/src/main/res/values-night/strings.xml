@@ -1,4 +1,47 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <string name="app_name">RSA Chat</string>
     <string name="username">UserName</string>
+    <string name="email">Email</string>
+    <string name="password">Password</string>
+    <string name="login">LogIn</string>
+    <string name="register">Register</string>
+    <string name="rsa_chat">Black Moon RSA Chat</string>
+    <string name="logout">LogOut</string>
+    <string name="procurar">Search</string>
+    <string name="write_message">Write message...</string>
+    <string name="send_message">Send Message</string>
+    <string name="profile">Profile</string>
+    <string name="chat">Chat</string>
+    <string name="seen">seen</string>
+    <string name="message">message</string>
+    <string name="seen_message">- Seen</string>
+    <string name="sent_message">- Sent</string>
+    <string name="no_message">No Message</string>
+    <string name="image_sent">Image sent.</string>
+    <string name="defaultmsg">defaultMsg</string>
+    <string name="online">online</string>
+    <string name="me">me:&#160;&#160;"</string>
+    <string name="sentyouanimage">sent you an image.</string>
+    <string name="userwillnotbesaved">Username will not be saved because its empty.</string>
+    <string name="writeusername">Write username:</string>
+    <string name="writeurl">Write Url:</string>
+    <string name="create">Create</string>
+    <string name="writesomething">Write something…</string>
+    <string name="updated">Updated</string>
+    <string name="cancel">Cancel</string>
+    <string name="imageisuploading">Image is uploading…</string>
+    <string name="writeemail">Write email.</string>
+    <string name="writepassword">Write password.</string>
+    <string name="errormessage">Error Message:&#160;&#160;</string>
+    <string name="chats">Chats</string>
+    <string name="search">Search</string>
+    <string name="myprofile">My Profile</string>
+    <string name="selectimage">Select Image</string>
+    <string name="cantsendemptymessages">Can\'t send empty messages.</string>
+    <string name="failednothinghappened">Failed, Nothing happen.</string>
+    <string name="yourgoogleplay">Your Google Play Store don\'t let you sign in, please use the other method of Registration/LogIn</string>
+    <string name="imagefrom">\"Image from \"</string>
+    <string name="viewfullimage">View full Image</string>
+    <string name="deletemessage">Delete Message</string>
 </resources>

@@ -16,7 +16,7 @@ import android.widget.EditText
 import android.widget.ImageView
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
-import com.bumptech.glide.Glide
+import coil.load
 import com.google.android.gms.tasks.Continuation
 import com.google.android.gms.tasks.Task
 import com.google.firebase.auth.FirebaseAuth
@@ -60,8 +60,8 @@ class SettingsFragment : Fragment() {
                 if(snapshot.exists()){
                     val newuser: Users? = snapshot.getValue(Users::class.java)
                     if(context != null){
-                        Glide.with(context!!).load(newuser!!.getcover()).placeholder(R.drawable.coverdefault).into(cover_settings)
-                        Glide.with(context!!).load(newuser!!.getprofile()).placeholder(R.drawable.profile_1).into(profileimage_settings)
+                        cover_settings.load(newuser!!.getcover())
+                        profileimage_settings.load(newuser!!.getprofile())
                         username.setText(newuser.getusername())
 
                         facebook_settings.setOnClickListener {
@@ -123,7 +123,7 @@ class SettingsFragment : Fragment() {
 
     private fun saveName(newUserName: String){
         if(newUserName.isEmpty()){
-            Toast.makeText(context, "Username will not be saved because its empty.", Toast.LENGTH_SHORT).show()
+            Toast.makeText(context, getString(R.string.userwillnotbesaved), Toast.LENGTH_SHORT).show()
         }else{
             val map = HashMap<String, Any>()
             map["username"] = newUserName
@@ -141,21 +141,21 @@ class SettingsFragment : Fragment() {
         val map = HashMap<String, Any>()
         val edittext = EditText(context)
         if(type == 0){
-            builder.setTitle("Write username:")
+            builder.setTitle(getString(R.string.writeusername))
             edittext.hint = "e.g tonycastanheira123"
         }else if(type == 1){
-            builder.setTitle("Write username:")
+            builder.setTitle(getString(R.string.writeusername))
             edittext.hint = "e.g tonycastanheira123"
         }else if(type == 2){
 
-            builder.setTitle("Write Url:")
+            builder.setTitle(getString(R.string.writeurl))
             edittext.hint = "e.g www.google.pt"
         }
         builder.setView(edittext)
-        builder.setPositiveButton("Create", DialogInterface.OnClickListener{
+        builder.setPositiveButton(getString(R.string.create), DialogInterface.OnClickListener{
             dialog, which ->
             if(edittext.text.toString() == ""){
-                Toast.makeText(context, "Write something...", Toast.LENGTH_LONG).show()
+                Toast.makeText(context, getString(R.string.writesomething), Toast.LENGTH_LONG).show()
             }else{
                 val str: String = edittext.text.toString()
                 if(type == 0){
@@ -167,12 +167,12 @@ class SettingsFragment : Fragment() {
                 }
                 refUsers!!.updateChildren(map).addOnCompleteListener {task ->
                     if (task.isSuccessful){
-                        Toast.makeText(context, "Updated", Toast.LENGTH_LONG).show()
+                        Toast.makeText(context, getString(R.string.updated), Toast.LENGTH_LONG).show()
                     }
                 }
             }
         })
-        builder.setNegativeButton("Cancel", DialogInterface.OnClickListener{
+        builder.setNegativeButton(getString(R.string.cancel), DialogInterface.OnClickListener{
                 dialog, which ->
             dialog.cancel()
         })
@@ -200,7 +200,7 @@ class SettingsFragment : Fragment() {
 
     private fun uploadImage(type: Int){
         val progressBar = ProgressDialog(context)
-        progressBar.setMessage("Image is uploading...")
+        progressBar.setMessage(getString(R.string.imageisuploading))
         progressBar.show()
         var uploadTask: StorageTask<*>
         if(imageUri != null){
@@ -247,7 +247,4 @@ class SettingsFragment : Fragment() {
 
 
     }
-
-
-
 }

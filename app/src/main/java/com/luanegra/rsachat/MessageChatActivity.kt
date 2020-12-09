@@ -1,6 +1,5 @@
 package com.luanegra.rsachat
 
-import android.app.Activity
 import android.app.ProgressDialog
 import android.content.Context
 import android.content.Intent
@@ -11,8 +10,7 @@ import android.widget.*
 import androidx.appcompat.widget.Toolbar
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import androidx.viewpager.widget.ViewPager
-import com.bumptech.glide.Glide
+import coil.load
 import com.google.android.gms.tasks.Continuation
 import com.google.android.gms.tasks.Task
 import com.google.firebase.auth.FirebaseAuth
@@ -21,9 +19,7 @@ import com.google.firebase.database.*
 import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.StorageTask
 import com.google.firebase.storage.UploadTask
-import com.luanegra.rsachat.RSA.DecryptGenerator
 import com.luanegra.rsachat.RSA.EncryptGenerator
-import com.luanegra.rsachat.RSA.GenerateKeys
 import com.luanegra.rsachat.adapterClasses.ChatAdapter
 import com.luanegra.rsachat.fragments.APIService
 import com.luanegra.rsachat.modelclasses.Chat
@@ -32,7 +28,6 @@ import com.luanegra.rsachat.notifications.*
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
-import java.security.PublicKey
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 
@@ -58,6 +53,9 @@ class MessageChatActivity : AppCompatActivity() {
         supportActionBar!!.title = ""
         supportActionBar!!.setDisplayHomeAsUpEnabled(true)
         toolbar.setNavigationOnClickListener {
+            val intent = Intent(this, MainActivity::class.java)
+            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK)
+            startActivity(intent)
             finish()
         }
         apiService = Client.Client.getClient("https://fcm.googleapis.com/")!!.create(APIService::class.java)
@@ -73,21 +71,21 @@ class MessageChatActivity : AppCompatActivity() {
         val btn_atach_image: ImageView = findViewById(R.id.atach_image_messagechat)
         recycler_messagechat = findViewById(R.id.recycler_messagechat)
         recycler_messagechat.setHasFixedSize(true)
-        val linearLayoutManager = LinearLayoutManager(applicationContext)
+        val linearLayoutManager = LinearLayoutManager(this)
         linearLayoutManager.stackFromEnd = true
         recycler_messagechat.layoutManager = linearLayoutManager
         btn_atach_image.setOnClickListener {
             val intent = Intent()
             intent.action = Intent.ACTION_GET_CONTENT
             intent.type = "image/*"
-            startActivityForResult(Intent.createChooser(intent,"Select Image"), 438)
+            startActivityForResult(Intent.createChooser(intent,getString(R.string.selectimage)), 438)
         }
 
         userRecieverRef = FirebaseDatabase.getInstance().reference.child("users").child(userIdVisit)
         userRecieverRef!!.addValueEventListener(object: ValueEventListener{
             override fun onDataChange(snapshot: DataSnapshot) {
             val user: Users? = snapshot.getValue(Users::class.java)
-                Glide.with(this@MessageChatActivity).load(user!!.getprofile()).placeholder(R.drawable.profile_1).into(reciever_profileImage)
+                reciever_profileImage.load(user!!.getprofile())
                 reciever_UserName.text = user.getusername()
                 send_messagechat.setOnClickListener{
                     if(!write_messagechat.text.toString().equals("")){
@@ -96,7 +94,7 @@ class MessageChatActivity : AppCompatActivity() {
                         sendMessage(firebaseUser!!.uid, userIdVisit, write_messagechat.text.toString(), publicKeyVisit)
                         write_messagechat.setText("")
                     }else{
-                        Toast.makeText(this@MessageChatActivity, "Can't send empty messages.", Toast.LENGTH_LONG).show()
+                        Toast.makeText(this@MessageChatActivity, getString(R.string.cantsendemptymessages), Toast.LENGTH_LONG).show()
                     }
                 }
                 retrieveChatMessages(firebaseUser!!.uid, userIdVisit, user.getprofile())
@@ -112,16 +110,15 @@ class MessageChatActivity : AppCompatActivity() {
     private fun retrieveChatMessages(senderId: String, receiverID: String, receiverImageUrl: String?) {
         mChatList = ArrayList()
         val chatsReference = FirebaseDatabase.getInstance().reference.child("Chats")
-        val chatsListsReference = FirebaseDatabase.getInstance().reference.child("ChatsLists")
         chatsReference.addValueEventListener(object: ValueEventListener{
             override fun onDataChange(snapshot: DataSnapshot) {
                 (mChatList as ArrayList<Chat>).clear()
                 for(valor in snapshot.children){
                     var chat = valor.getValue(Chat::class.java)
-                    if(chat!!.getreciever().equals(receiverID) && chat!!.getsender().equals(senderId) || chat!!.getreciever().equals(senderId) && chat!!.getsender().equals(receiverID)){
+                    if(chat!!.getreciever().equals(receiverID) && chat.getsender().equals(senderId) || chat.getreciever().equals(senderId) && chat.getsender().equals(receiverID)){
                             (mChatList as ArrayList<Chat>).add(chat)
                     }
-                    chatsAdapter = ChatAdapter(applicationContext, (mChatList as ArrayList<Chat>), receiverImageUrl.toString())
+                    chatsAdapter = ChatAdapter(this@MessageChatActivity, (mChatList as ArrayList<Chat>), receiverImageUrl.toString())
                     recycler_messagechat.adapter = chatsAdapter
                 }
             }
@@ -200,7 +197,7 @@ class MessageChatActivity : AppCompatActivity() {
                 for(dataSnapshot in snapshot.children){
                     val token: Token? = dataSnapshot.getValue(Token::class.java)
                     val data  = Data(firebaseUser!!.uid, R.mipmap.ic_launcher, "$message", "New message from $getusername", userIdVisit)
-                    val sender = Sender(data!!, token!!.getToken().toString())
+                    val sender = Sender(data, token!!.getToken().toString())
                     apiService!!.sendNotification(sender).enqueue(object: Callback<MyResponse>{
                         override fun onResponse(
                             call: Call<MyResponse>,
@@ -208,7 +205,7 @@ class MessageChatActivity : AppCompatActivity() {
                         ) {
                             if(response.code() == 200){
                                 if(response.body()!!.success != 1){
-                                    Toast.makeText(this@MessageChatActivity, "Failed, Nothing happen.", Toast.LENGTH_LONG).show()
+                                    Toast.makeText(this@MessageChatActivity, getString(R.string.failednothinghappened), Toast.LENGTH_LONG).show()
                                 }
                             }
 
@@ -232,7 +229,7 @@ class MessageChatActivity : AppCompatActivity() {
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
-        if(requestCode == 438 && resultCode == RESULT_OK && data != null && data!!.data != null){
+        if(requestCode == 438 && resultCode == RESULT_OK && data != null && data.data != null){
             notify = true
             val loadingBar = ProgressDialog(this)
             loadingBar.setMessage("Please wait...")
@@ -264,20 +261,20 @@ class MessageChatActivity : AppCompatActivity() {
                     messageHashMap["isseen"] = false
                     messageHashMap["messageId"] = messageId
                     messageHashMap["url"] = downloadUrl.toString()
-                    val textEnc: String = encryptMessage("sent you an image.", publicKeyVisit)
+                    val textEnc: String = encryptMessage(getString(R.string.sentyouanimage), publicKeyVisit)
                     messageHashMap["message"] = textEnc
                     val sharedPreference =  getSharedPreferences("RSA_CHAT", Context.MODE_PRIVATE)
                     val editor = sharedPreference.edit()
                     editor.putString(messageId, "sent you an image.")
                     editor.apply()
-                    ref.child("Chats").child(messageId!!).setValue(messageHashMap).addOnCompleteListener { task ->
-                        if(task.isSuccessful){
+                    ref.child("Chats").child(messageId!!).setValue(messageHashMap).addOnCompleteListener { task1 ->
+                        if(task1.isSuccessful){
                             val usersRef = FirebaseDatabase.getInstance().reference.child("users").child(firebaseUser!!.uid)
                             usersRef.addValueEventListener(object: ValueEventListener {
                                 override fun onDataChange(snapshot: DataSnapshot) {
                                     val user = snapshot.getValue(Users::class.java)
                                     if(notify){
-                                        sendNotification(userIdVisit, user!!.getusername(), "sent you an image.")
+                                        sendNotification(userIdVisit, user!!.getusername(), getString(R.string.sentyouanimage))
                                     }
                                     notify = false
                                 }
@@ -292,7 +289,6 @@ class MessageChatActivity : AppCompatActivity() {
                     loadingBar.dismiss()
                 }
             }
-
         }
     }
 

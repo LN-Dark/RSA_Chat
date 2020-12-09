@@ -1,20 +1,23 @@
 package com.luanegra.rsachat
 
+import android.app.AlertDialog
 import android.content.Intent
 import android.net.Uri
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.view.LayoutInflater
 import android.widget.Button
 import android.widget.EditText
 import android.widget.ImageView
 import android.widget.TextView
-import com.bumptech.glide.Glide
+import coil.load
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.database.*
 import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.StorageReference
 import com.luanegra.rsachat.modelclasses.Users
+import de.hdodenhof.circleimageview.CircleImageView
 
 class VisitProfileActivity : AppCompatActivity() {
 
@@ -42,8 +45,25 @@ class VisitProfileActivity : AppCompatActivity() {
         refUsers!!.addValueEventListener(object : ValueEventListener{
             override fun onDataChange(snapshot: DataSnapshot) {
                 val user: Users? = snapshot.getValue(Users::class.java)
-                Glide.with(this@VisitProfileActivity).load(user!!.getprofile()).placeholder(R.drawable.profile_1).into(profileimage_visitprofile)
-                Glide.with(this@VisitProfileActivity).load(user!!.getcover()).placeholder(R.drawable.coverdefault).into(cover_visitprofile)
+                profileimage_visitprofile.load(user!!.getprofile())
+                profileimage_visitprofile.setOnClickListener{
+                    val mDialogView = LayoutInflater.from(this@VisitProfileActivity).inflate(
+                        R.layout.profileimageview,
+                        null
+                    )
+
+                    val mBuilder = AlertDialog.Builder(this@VisitProfileActivity)
+                        .setView(mDialogView)
+                    val  mAlertDialog = mBuilder.show()
+
+                    val dialogimageview: CircleImageView = mDialogView.findViewById(R.id.img_profileimageview)
+                    dialogimageview.load(user!!.getprofile())
+
+                    mDialogView.findViewById<Button>(R.id.btn_closeprofileimageview).setOnClickListener {
+                        mAlertDialog.dismiss()
+                    }
+                }
+                cover_visitprofile.load(user!!.getcover())
                 supportActionBar!!.title = user!!.getusername()
                 facebook_visitprofile.setOnClickListener {
                     val uri = Uri.parse(user!!.getfacebook())

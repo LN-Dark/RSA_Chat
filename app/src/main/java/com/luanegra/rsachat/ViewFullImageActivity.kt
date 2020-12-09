@@ -4,7 +4,7 @@ import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.ImageView
-import com.bumptech.glide.Glide
+import coil.load
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.database.FirebaseDatabase
@@ -28,17 +28,18 @@ class ViewFullImageActivity : AppCompatActivity() {
         firebaseUser = FirebaseAuth.getInstance().currentUser
         val toolbar: androidx.appcompat.widget.Toolbar = findViewById(R.id.toolbar_viewfullimage)
         setSupportActionBar(toolbar)
-        supportActionBar!!.title = "Image from $reciever_username"
+        supportActionBar!!.title = getString(R.string.imagefrom) + " $reciever_username"
         supportActionBar!!.setDisplayHomeAsUpEnabled(true)
         toolbar.setNavigationOnClickListener {
             val intent = Intent(this, MessageChatActivity::class.java)
+            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK)
             intent.putExtra("reciever_id", reciever_id)
             intent.putExtra("reciever_profile", reciever_profile)
             intent.putExtra("reciever_username", reciever_username)
             startActivity(intent)
             finish()
         }
-        Glide.with(this).load(image_url).into(image_view!!)
+        image_view!!.load(image_url)
     }
 
     private fun updateStatus(status: String){
@@ -56,5 +57,16 @@ class ViewFullImageActivity : AppCompatActivity() {
     override fun onPause() {
         super.onPause()
         updateStatus("offline")
+    }
+
+    override fun onBackPressed() {
+        super.onBackPressed()
+        val intent = Intent(this, MessageChatActivity::class.java)
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK)
+        intent.putExtra("reciever_id", reciever_id)
+        intent.putExtra("reciever_profile", reciever_profile)
+        intent.putExtra("reciever_username", reciever_username)
+        startActivity(intent)
+        finish()
     }
 }

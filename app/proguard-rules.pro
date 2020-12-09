@@ -22,3 +22,4 @@
 
 -keepattributes Signature
 -keepattributes *Annotation*
+-keepclassmembers class com.luanegra.rsachat.modelclasses.** { *; }

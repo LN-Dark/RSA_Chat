@@ -17,7 +17,6 @@ import com.google.firebase.database.FirebaseDatabase
 
 class LogInActivity : AppCompatActivity() {
     private lateinit var mAuth: FirebaseAuth
-    private lateinit var refUsers: DatabaseReference
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -44,9 +43,9 @@ class LogInActivity : AppCompatActivity() {
         val password: EditText = findViewById<EditText>(R.id.password_login)
 
         if(email.text.toString() == ""){
-            Toast.makeText(this@LogInActivity, "Write email.", Toast.LENGTH_LONG).show()
+            Toast.makeText(this@LogInActivity, getString(R.string.writeemail), Toast.LENGTH_LONG).show()
         }else if(password.text.toString() == ""){
-            Toast.makeText(this@LogInActivity, "Write password.", Toast.LENGTH_LONG).show()
+            Toast.makeText(this@LogInActivity, getString(R.string.writepassword), Toast.LENGTH_LONG).show()
         }else{
             mAuth.signInWithEmailAndPassword(email.text.toString(), password.text.toString()).addOnCompleteListener { task ->
                 if(task.isSuccessful){
@@ -55,7 +54,7 @@ class LogInActivity : AppCompatActivity() {
                     startActivity(intent)
                     finish()
                 }else{
-                    Toast.makeText(this@LogInActivity, "Error Message:  " + task.exception!!.message.toString(), Toast.LENGTH_LONG).show()
+                    Toast.makeText(this@LogInActivity, getString(R.string.errormessage) + task.exception!!.message.toString(), Toast.LENGTH_LONG).show()
                 }
             }
         }

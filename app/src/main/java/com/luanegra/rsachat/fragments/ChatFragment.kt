@@ -68,12 +68,11 @@ class ChatFragment : Fragment() {
         ref.child(firebaseUser!!.uid).setValue(token1)
     }
 
+    val usersRef = FirebaseDatabase.getInstance().reference.child("users")
+    var retrieveEventListener: ValueEventListener? = null
     private fun retrieveChatList(){
         mUsers = ArrayList()
-        val usersRef = FirebaseDatabase.getInstance().reference.child("users")
-
-
-        usersRef!!.addValueEventListener(object : ValueEventListener{
+        retrieveEventListener = usersRef!!.addValueEventListener(object : ValueEventListener{
             override fun onDataChange(snapshot: DataSnapshot) {
                 (mUsers as ArrayList).clear()
                 for(datasnap in snapshot.children){
@@ -94,6 +93,11 @@ class ChatFragment : Fragment() {
 
         })
 
+    }
+
+    override fun onPause() {
+        super.onPause()
+        usersRef!!.removeEventListener(retrieveEventListener!!)
     }
 
 }

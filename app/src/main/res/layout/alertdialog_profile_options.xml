@@ -7,7 +7,6 @@
 
 
     <LinearLayout
-        android:id="@+id/layout_dialog"
         android:layout_width="match_parent"
         android:layout_height="100dp"
         android:layout_alignParentTop="true"
@@ -24,7 +23,7 @@
             android:layout_marginTop="60dp"
             android:layout_marginEnd="5dp"
             android:layout_weight="1"
-            android:text="Profile">
+            android:text="@string/profile">
 
         </Button>
 
@@ -36,7 +35,7 @@
             android:layout_marginTop="60dp"
             android:layout_marginEnd="5dp"
             android:layout_weight="1"
-            android:text="Chat">
+            android:text="@string/chat">
 
         </Button>
 

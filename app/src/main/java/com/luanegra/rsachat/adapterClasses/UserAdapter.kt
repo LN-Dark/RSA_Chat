@@ -9,7 +9,7 @@ import android.view.ViewGroup
 import android.widget.Button
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
-import com.bumptech.glide.Glide
+import coil.load
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
@@ -21,7 +21,7 @@ import com.luanegra.rsachat.RSA.DecryptGenerator
 import com.luanegra.rsachat.VisitProfileActivity
 import com.luanegra.rsachat.modelclasses.Chat
 import com.luanegra.rsachat.modelclasses.Users
-
+import de.hdodenhof.circleimageview.CircleImageView
 
 
 class UserAdapter(mContext: Context, mUserList: List<Users>, isChatCheck: Boolean) : RecyclerView.Adapter<UserAdapter.ViewHolder?>() {
@@ -38,9 +38,9 @@ class UserAdapter(mContext: Context, mUserList: List<Users>, isChatCheck: Boolea
     class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         var txt_userName: TextView
         var txt_lastMessage: TextView
-        var image_profile: de.hdodenhof.circleimageview.CircleImageView
-        var image_online: de.hdodenhof.circleimageview.CircleImageView
-        var image_offline: de.hdodenhof.circleimageview.CircleImageView
+        var image_profile: CircleImageView
+        var image_online: CircleImageView
+        var image_offline: CircleImageView
 
         init {
             txt_userName = itemView.findViewById(R.id.user_name_search)
@@ -63,7 +63,7 @@ class UserAdapter(mContext: Context, mUserList: List<Users>, isChatCheck: Boolea
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val user: Users? = mUserList[position]
         holder.txt_userName.text = user!!.getusername()
-        Glide.with(mContext).load(user!!.getprofile()).placeholder(R.drawable.profile_1).into(holder.image_profile)
+        holder.image_profile.load(user.getprofile())
 
         holder.itemView.setOnClickListener {
 
@@ -75,22 +75,22 @@ class UserAdapter(mContext: Context, mUserList: List<Users>, isChatCheck: Boolea
             val mBuilder = AlertDialog.Builder(mContext)
                 .setView(mDialogView)
             val  mAlertDialog = mBuilder.show()
-            Glide.with(mContext).load(user!!.getprofile()).placeholder(R.drawable.profile_1).into(
-                mDialogView.findViewById(R.id.profile_dialog)
-            )
+
+            val dialogimageview: CircleImageView = mDialogView.findViewById(R.id.profile_dialog)
+            dialogimageview.load(user!!.getprofile())
 
             mDialogView.findViewById<Button>(R.id.perfil_dialog_show).setOnClickListener {
                 val intent = Intent(mContext, VisitProfileActivity::class.java)
-                intent.putExtra("reciever_id", user!!.getUid())
+                intent.putExtra("reciever_id", user.getUid())
                 mContext.startActivity(intent)
                 mAlertDialog.dismiss()
             }
 
             mDialogView.findViewById<Button>(R.id.chat_dialog_show).setOnClickListener {
                 val intent = Intent(mContext, MessageChatActivity::class.java)
-                intent.putExtra("reciever_id", user!!.getUid())
-                intent.putExtra("reciever_profile", user!!.getprofile())
-                intent.putExtra("reciever_username", user!!.getusername())
+                intent.putExtra("reciever_id", user.getUid())
+                intent.putExtra("reciever_profile", user.getprofile())
+                intent.putExtra("reciever_username", user.getusername())
                 mContext.startActivity(intent)
                 mAlertDialog.dismiss()
             }
@@ -102,8 +102,7 @@ class UserAdapter(mContext: Context, mUserList: List<Users>, isChatCheck: Boolea
         }else{
           holder.txt_lastMessage.visibility = View.GONE
         }
-
-        if(user.getstatus().equals("online")){
+        if(user.getstatus().equals(mContext.getString(R.string.online))){
             holder.image_online.visibility = View.VISIBLE
             holder.image_offline.visibility = View.GONE
         }else{
@@ -124,7 +123,7 @@ class UserAdapter(mContext: Context, mUserList: List<Users>, isChatCheck: Boolea
                         if(chat.getreciever() == firebaseUser!!.uid && chat.getsender() == uid || chat.getreciever() == uid && chat.getsender() == firebaseUser!!.uid){
                             if(chat.getsender().equals(firebaseUser!!.uid)){
                                 chat = decryptMessage(chat, 0)
-                                chat.setmessage("me: " + chat.getmessage())
+                                chat.setmessage(mContext.getString(R.string.me) + chat.getmessage())
                             }else{
                                 chat = decryptMessage(chat, 1)
                                 chat.setmessage(recieverUserName + ": " + chat.getmessage())
@@ -134,19 +133,17 @@ class UserAdapter(mContext: Context, mUserList: List<Users>, isChatCheck: Boolea
                     }
                 }
                 when(lastMsg){
-                    "defaultMsg" -> txtLastmessage.text = "No Message"
-                    "sent you an image." -> txtLastmessage.text = "Image sent."
+                    mContext.getString(R.string.no_message) -> txtLastmessage.text = mContext.getString(R.string.no_message)
+                    mContext.getString(R.string.sentyouanimage) -> txtLastmessage.text = mContext.getString(R.string.image_sent)
                     else -> txtLastmessage.text = lastMsg
                 }
-                lastMsg = "defaultMsg"
+                lastMsg = mContext.getString(R.string.defaultmsg)
             }
 
             override fun onCancelled(error: DatabaseError) {
 
             }
-
         })
-
     }
 
     fun decryptMessage(chat: Chat, who: Int): Chat {
@@ -158,7 +155,6 @@ class UserAdapter(mContext: Context, mUserList: List<Users>, isChatCheck: Boolea
             val plainText = chat.getmessage()?.let { DecryptGenerator.generateDecrypt(encryptText = it, privateKey = sharedPreference.getString("privateKey","")) }
             chat.setmessage(plainText!!.toString())
         }
-
         return chat
     }
 

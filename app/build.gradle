@@ -1,12 +1,59 @@
+import java.text.SimpleDateFormat
+
 plugins {
     id 'com.android.application'
     id 'kotlin-android'
 }
 
+static def buildTime() {
+    def df = new SimpleDateFormat("dd-MM-YY")
+    df.setTimeZone(TimeZone.getTimeZone("UTC"))
+    return df.format(new Date())
+}
+
+static def buildHour() {
+    def df = new SimpleDateFormat("H:mm")
+    df.setTimeZone(TimeZone.getTimeZone("UTC"))
+    return df.format(new Date())
+}
+def keystorePropertiesFile = rootProject.file("keystore.properties")
+def keystoreProperties = new Properties()
+keystoreProperties.load(new FileInputStream(keystorePropertiesFile))
 android {
+    def versionPropsFile = file('version.properties')
+    def versionBuild
+
+    if (versionPropsFile.canRead()) {
+        Properties versionProps = new Properties()
+        versionProps.load(new FileInputStream(versionPropsFile))
+        versionBuild = versionProps['VERSION_BUILD'].toInteger()
+    } else {
+        throw new FileNotFoundException("Could not read version.properties!")
+    }
+    ext.autoIncrementBuildNumber = {
+
+        if (versionPropsFile.canRead()) {
+            Properties versionProps = new Properties()
+            versionProps.load(new FileInputStream(versionPropsFile))
+            versionBuild = versionProps['VERSION_BUILD'].toInteger() + 1
+            versionProps['VERSION_BUILD'] = versionBuild.toString()
+            versionProps.store(versionPropsFile.newWriter(), null)
+        } else {
+            throw new FileNotFoundException("Could not read version.properties!")
+        }
+    }
     signingConfigs {
+        debug {
+            keyAlias keystoreProperties['keyAlias']
+            keyPassword keystoreProperties['keyPassword']
+            storeFile file('C:\\Users\\pedro\\AndroidStudioProjects\\rsaChatKeystore.jks')
+            storePassword keystoreProperties['storePassword']
+        }
         release {
-            
+            keyAlias keystoreProperties['keyAlias']
+            keyPassword keystoreProperties['keyPassword']
+            storeFile file('C:\\Users\\pedro\\AndroidStudioProjects\\rsaChatKeystore.jks')
+            storePassword keystoreProperties['storePassword']
         }
     }
     compileSdkVersion 30
@@ -17,9 +64,10 @@ android {
         minSdkVersion 26
         targetSdkVersion 30
         versionCode 1
-        versionName "1.0"
-
+        versionName "1.0" + versionBuild
+        setProperty("archivesBaseName", "LN-RSA_" + buildTime())
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+        signingConfig signingConfigs.release
     }
 
     buildTypes {
@@ -39,7 +87,7 @@ android {
 
 dependencies {
 
-    implementation ("org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"){
+    implementation ("org.jetbrains.kotlin:kotlin-stdlib:1.4.20"){
         exclude group:"org.jetbrains.kotlin", module: "kotlin-stdlib-jdk7"
     }
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
@@ -62,8 +110,6 @@ dependencies {
     implementation 'com.google.firebase:firebase-database-ktx:19.5.1'
     implementation 'com.google.firebase:firebase-messaging-ktx:21.0.0'
     implementation 'de.hdodenhof:circleimageview:3.1.0'
-    implementation 'com.github.bumptech.glide:glide:4.11.0'
-    annotationProcessor 'com.github.bumptech.glide:compiler:4.11.0'
     implementation 'androidx.cardview:cardview:1.0.0'
     implementation 'com.rengwuxian.materialedittext:library:2.1.4'
     implementation 'com.squareup.retrofit2:retrofit:2.9.0'
@@ -72,6 +118,7 @@ dependencies {
     implementation platform('com.google.firebase:firebase-bom:26.1.0')
     implementation 'com.google.firebase:firebase-analytics-ktx'
     implementation 'com.nimbusds:nimbus-jose-jwt:9.1.4'
+    implementation("io.coil-kt:coil:1.1.0")
 
 }
 apply plugin: 'com.google.gms.google-services'

@@ -73,12 +73,12 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="@android:color/transparent"
-            android:hint="Write message..."
-            android:layout_toRightOf="@id/atach_image_messagechat"
+            android:hint="@string/write_message"
+            android:layout_toEndOf="@id/atach_image_messagechat"
             android:layout_centerVertical="true"
             android:layout_marginStart="6dp"
             android:layout_marginEnd="6dp"
-            android:layout_toLeftOf="@+id/send_messagechat"
+            android:layout_toStartOf="@+id/send_messagechat"
             android:textColorHint="@color/white">
         </EditText>
 

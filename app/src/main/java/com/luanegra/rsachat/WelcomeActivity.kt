@@ -5,6 +5,7 @@ import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
+import android.view.View
 import android.widget.Button
 import android.widget.Toast
 import com.google.android.gms.auth.api.signin.GoogleSignIn
@@ -25,19 +26,20 @@ import com.luanegra.rsachat.RSA.GenerateKeys
 class WelcomeActivity : AppCompatActivity() {
 
     var firebaseUser: FirebaseUser? = null
-
+    var btn_register: Button? = null
+    var btn_login: Button? = null
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_welcome)
-        val btn_register = findViewById<Button>(R.id.btn_register_welcome)
-        btn_register.setOnClickListener{
+        btn_register = findViewById<Button>(R.id.btn_register_welcome)
+        btn_register!!.setOnClickListener{
             val intent = Intent(this@WelcomeActivity, RegisterActivity::class.java)
             startActivity(intent)
             finish()
         }
 
-        val btn_login = findViewById<Button>(R.id.btn_login_welcome)
-        btn_login.setOnClickListener{
+        btn_login = findViewById<Button>(R.id.btn_login_welcome)
+        btn_login!!.setOnClickListener{
             val intent = Intent(this@WelcomeActivity, LogInActivity::class.java)
             startActivity(intent)
             finish()
@@ -93,13 +95,15 @@ class WelcomeActivity : AppCompatActivity() {
                     val account = task.getResult(ApiException::class.java)!!
                     firebaseAuthWithGoogle(account)
                 } catch (e: ApiException) {
-                    Toast.makeText(this@WelcomeActivity, "Error Message:  " + e.message, Toast.LENGTH_LONG).show()
+                    Toast.makeText(this@WelcomeActivity, getString(R.string.errormessage) + e.message, Toast.LENGTH_LONG).show()
                 }
             } else {
                 if(task.exception.toString().contains("125000") || task.exception.toString().contains("10")){
-                    Toast.makeText(this@WelcomeActivity, "Your Google Play Store don't let you sign in, please use the other method of Registration/LogIn", Toast.LENGTH_LONG).show()
+                    Toast.makeText(this@WelcomeActivity, getString(R.string.yourgoogleplay), Toast.LENGTH_LONG).show()
+                    btn_login!!.visibility = View.VISIBLE
+                    btn_register!!.visibility = View.VISIBLE
                 }else{
-                    Toast.makeText(this@WelcomeActivity, "Error Message:  " + task.exception.toString(), Toast.LENGTH_LONG).show()
+                    Toast.makeText(this@WelcomeActivity, getString(R.string.errormessage) + task.exception.toString(), Toast.LENGTH_LONG).show()
                 }
             }
         }
@@ -141,11 +145,11 @@ class WelcomeActivity : AppCompatActivity() {
                                 startActivity(intent)
                                 finish()
                             }else{
-                                Toast.makeText(this@WelcomeActivity, "Error Message:  " + task.exception!!.message, Toast.LENGTH_LONG).show()
+                                Toast.makeText(this@WelcomeActivity, getString(R.string.errormessage) + task.exception!!.message, Toast.LENGTH_LONG).show()
                             }
                         }
                     } else {
-                        Toast.makeText(this@WelcomeActivity, "Error Message:  " + task.exception!!.message, Toast.LENGTH_LONG).show()
+                        Toast.makeText(this@WelcomeActivity, getString(R.string.errormessage) + task.exception!!.message, Toast.LENGTH_LONG).show()
                     }
                 }
     }

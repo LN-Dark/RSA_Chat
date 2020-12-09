@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">RSA Chat</string>
+    <string name="username">Nome de utlizador</string>
+    <string name="email">Email</string>
+    <string name="password">Palavra Chave</string>
+    <string name="login">LogIn</string>
+    <string name="register">Registar</string>
+    <string name="rsa_chat">Black Moon RSA Chat</string>
+    <string name="logout">Sair</string>
+    <string name="procurar">Procurar</string>
+    <string name="write_message">Escreve a mensagem…</string>
+    <string name="send_message">Enviar mensagem</string>
+    <string name="profile">Perfil</string>
+    <string name="chat">Converças</string>
+    <string name="seen">seen</string>
+    <string name="message">mensagem</string>
+    <string name="seen_message">- Visto</string>
+    <string name="sent_message">- Enviado</string>
+    <string name="no_message">Sem mensagens</string>
+    <string name="image_sent">Imagem enviada.</string>
+    <string name="defaultmsg">defaultMsg</string>
+    <string name="online">online</string>
+    <string name="me">eu:&#160;&#160;"</string>
+    <string name="sentyouanimage">sent you an image.</string>
+    <string name="userwillnotbesaved">O nome de utilizador nao vai ser gravado porque está em branco.</string>
+    <string name="writeusername">Escreve o nome de utilizador:</string>
+    <string name="writeurl">Escreve a Url:</string>
+    <string name="create">Criar</string>
+    <string name="writesomething">Escreve qualquer coisa…</string>
+    <string name="updated">Atualizado</string>
+    <string name="cancel">Cancelar</string>
+    <string name="imageisuploading">A enviar imagem…</string>
+    <string name="writeemail">Escreve o email.</string>
+    <string name="writepassword">Escreve a password.</string>
+    <string name="errormessage">Mensagem de ERRO:&#160;&#160;</string>
+    <string name="chats">Converças</string>
+    <string name="search">Procurar</string>
+    <string name="myprofile">O meu Perfil</string>
+    <string name="selectimage">Seleciona a imagem</string>
+    <string name="cantsendemptymessages">Não se pode enviar mensagens em branco.</string>
+    <string name="failednothinghappened">Erro, não acontece nada.</string>
+    <string name="yourgoogleplay">O teu Google Play Store deixa fazer sign in, por favor utilizado o outro método de Registar/LogIn</string>
+    <string name="imagefrom">Imagem de&#160;"</string>
+    <string name="viewfullimage">Abrir imagem</string>
+    <string name="deletemessage">Apagar mensagem</string>
+</resources>

@@ -20,9 +20,10 @@
         android:layout_height="wrap_content"
         android:layout_toEndOf="@+id/profile_image_message"
         android:layout_marginStart="6dp"
-        android:text="message"
+        android:layout_below="@+id/image_view"
+        android:text="@string/message"
         android:textColor="@color/white"
-        android:textSize="18sp"
+        android:textSize="16sp"
         android:padding="8dp">
 
     </TextView>
@@ -40,10 +41,10 @@
         android:id="@+id/text_seen"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/profile_image_message"
-        android:text="seen"
+        android:layout_below="@+id/message_chat"
+        android:text="@string/seen"
         android:textSize="12sp"
-        android:layout_marginTop="15dp"
+        android:layout_marginTop="10dp"
         android:layout_marginStart="10dp"
         >
     </TextView>

@@ -47,11 +47,11 @@ class RegisterActivity : AppCompatActivity() {
         val password: EditText = findViewById<EditText>(R.id.password_register)
 
         if(username.text.toString() == ""){
-            Toast.makeText(this@RegisterActivity, "Write username.", Toast.LENGTH_LONG).show()
+            Toast.makeText(this@RegisterActivity, getString(R.string.writeusername), Toast.LENGTH_LONG).show()
         }else if(email.text.toString() == ""){
-            Toast.makeText(this@RegisterActivity, "Write email.", Toast.LENGTH_LONG).show()
+            Toast.makeText(this@RegisterActivity, getString(R.string.writeemail), Toast.LENGTH_LONG).show()
         }else if(password.text.toString() == ""){
-            Toast.makeText(this@RegisterActivity, "Write password.", Toast.LENGTH_LONG).show()
+            Toast.makeText(this@RegisterActivity, getString(R.string.writepassword), Toast.LENGTH_LONG).show()
         }else{
             mAuth.createUserWithEmailAndPassword(email.text.toString(), password.text.toString()).addOnCompleteListener { task ->
                 if(task.isSuccessful){
@@ -69,8 +69,7 @@ class RegisterActivity : AppCompatActivity() {
                     userHashMap["instagram"] = "https://m.instagram.com"
                     userHashMap["website"] = "https://www.google.pt"
                     val gerarChaves = GenerateKeys()
-                    var listKeys: List<String>?
-                    listKeys = ArrayList()
+                    val listKeys: List<String>?
                     listKeys = gerarChaves.generateKeys()
                     userHashMap["publicKey"] = listKeys.get(0)
 
@@ -80,23 +79,22 @@ class RegisterActivity : AppCompatActivity() {
                     editor.putString("publicKey",listKeys.get(0))
                     editor.apply()
 
-                    refUsers.updateChildren(userHashMap).addOnCompleteListener { task ->
-                        if(task.isSuccessful){
+                    refUsers.updateChildren(userHashMap).addOnCompleteListener { task1 ->
+                        if(task1.isSuccessful){
                             val intent = Intent(this@RegisterActivity, MainActivity::class.java)
                             intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK)
                             startActivity(intent)
                             finish()
                         }else{
-                            Toast.makeText(this@RegisterActivity, "Error Message:  " + task.exception!!.message, Toast.LENGTH_LONG).show()
+                            Toast.makeText(this@RegisterActivity, getString(R.string.errormessage) + task1.exception!!.message, Toast.LENGTH_LONG).show()
                         }
                     }
 
                 }else{
-                    Toast.makeText(this@RegisterActivity, "Error Message:  " + task.exception!!.message.toString(), Toast.LENGTH_LONG).show()
+                    Toast.makeText(this@RegisterActivity, getString(R.string.errormessage) + task.exception!!.message.toString(), Toast.LENGTH_LONG).show()
                 }
             }
         }
-
     }
 
 
