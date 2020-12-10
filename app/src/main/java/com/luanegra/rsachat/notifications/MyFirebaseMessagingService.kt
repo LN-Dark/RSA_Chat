@@ -16,6 +16,7 @@ import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
 import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.messaging.RemoteMessage
+import com.luanegra.rsachat.AutenticationActivity
 import com.luanegra.rsachat.MessageChatActivity
 import com.luanegra.rsachat.RSA.DecryptGenerator
 import com.luanegra.rsachat.modelclasses.Chat
@@ -52,10 +53,11 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
         FirebaseDatabase.getInstance().reference.child("users").child(user).addValueEventListener(object: ValueEventListener{
             override fun onDataChange(snapshot: DataSnapshot) {
                 val user: Users? = snapshot.getValue(Users::class.java)
-                val intent = Intent(context, MessageChatActivity::class.java)
+                val intent = Intent(context, AutenticationActivity::class.java)
                 intent.putExtra("reciever_id", user!!.getUid())
-                intent.putExtra("reciever_profile", user!!.getprofile())
-                intent.putExtra("reciever_username", user!!.getusername())
+                intent.putExtra("reciever_profile", user.getprofile())
+                intent.putExtra("reciever_username", user.getusername())
+                intent.putExtra("activityType", "notification")
                 intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
                 val pedingIntent = PendingIntent.getActivity(context, j, intent, PendingIntent.FLAG_ONE_SHOT)
                 val defaultSound = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION)
@@ -102,10 +104,11 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
         FirebaseDatabase.getInstance().reference.child("users").child(user).addValueEventListener(object: ValueEventListener{
             override fun onDataChange(snapshot: DataSnapshot) {
                 val user: Users? = snapshot.getValue(Users::class.java)
-                val intent = Intent(context, MessageChatActivity::class.java)
+                val intent = Intent(context, AutenticationActivity::class.java)
                 intent.putExtra("reciever_id", user!!.getUid())
-                intent.putExtra("reciever_profile", user!!.getprofile())
-                intent.putExtra("reciever_username", user!!.getusername())
+                intent.putExtra("reciever_profile", user.getprofile())
+                intent.putExtra("reciever_username", user.getusername())
+                intent.putExtra("activityType", "notification")
                 intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
                 val pedingIntent = PendingIntent.getActivity(context, j, intent, PendingIntent.FLAG_ONE_SHOT)
                 val defaultSound = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION)

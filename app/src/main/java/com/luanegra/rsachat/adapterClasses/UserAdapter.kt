@@ -123,6 +123,7 @@ class UserAdapter(mContext: Context, mUserList: List<Users>, isChatCheck: Boolea
                 intent.putExtra("reciever_id", user.getUid())
                 intent.putExtra("reciever_profile", user.getprofile())
                 intent.putExtra("reciever_username", user.getusername())
+                intent.putExtra("resultAUTH", "true")
                 mContext.startActivity(intent)
                 mAlertDialog.dismiss()
             }

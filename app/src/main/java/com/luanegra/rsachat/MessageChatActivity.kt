@@ -45,6 +45,7 @@ class MessageChatActivity : AppCompatActivity() {
     var apiService: APIService? = null
     var publicKeyVisit: String = ""
     var recieverName: String = ""
+    var recieverProfileImage: String = ""
     var showNotificationUser: Boolean = true
 
 
@@ -104,25 +105,6 @@ class MessageChatActivity : AppCompatActivity() {
 
         })
 
-        refblockedUsers.child("users").child(userIdVisit).addValueEventListener(object: ValueEventListener{
-            override fun onDataChange(snapshot: DataSnapshot) {
-                if (snapshot.exists()){
-                    for(dataSnapshot in snapshot.children){
-                        val userID: Users? = dataSnapshot.getValue(Users::class.java)
-                        showNotificationUser = userID!!.getnotificationsShow()
-                    }
-                }
-            }
-
-            override fun onCancelled(error: DatabaseError) {
-
-            }
-
-        })
-
-
-
-
         btn_atach_image.setOnClickListener {
             val intent = Intent()
             intent.action = Intent.ACTION_GET_CONTENT
@@ -135,8 +117,10 @@ class MessageChatActivity : AppCompatActivity() {
             override fun onDataChange(snapshot: DataSnapshot) {
             val user: Users? = snapshot.getValue(Users::class.java)
                 reciever_profileImage.load(user!!.getprofile())
+                recieverProfileImage = user!!.getprofile()
                 reciever_UserName.text = user.getusername()
                 recieverName = user.getusername().toString()
+                showNotificationUser = user.getnotificationsShow()
                 send_messagechat.setOnClickListener{
                     if(!write_messagechat.text.toString().equals("")){
                         notify = true
@@ -387,6 +371,18 @@ class MessageChatActivity : AppCompatActivity() {
     override fun onResume() {
         super.onResume()
         updateStatus("online")
+        if(!intent.getStringExtra("resultAUTH").equals("true")){
+            val intent = Intent(this, AutenticationActivity::class.java)
+            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK)
+            intent.putExtra("reciever_id", userIdVisit)
+            intent.putExtra("reciever_profile", recieverProfileImage)
+            intent.putExtra("reciever_username", recieverName)
+            intent.putExtra("activityType", "notification")
+            startActivity(intent)
+            finish()
+        }else{
+            intent.putExtra("resultAUTH", "false")
+        }
     }
 
 }

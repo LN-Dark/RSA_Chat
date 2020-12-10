@@ -14,6 +14,10 @@ class AutenticationActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_autentication)
+        ActType = intent.getStringExtra("activityType")
+        reciever_id = intent.getStringExtra("reciever_id").toString()
+        reciever_profile = intent.getStringExtra("reciever_profile").toString()
+        reciever_username = intent.getStringExtra("reciever_username").toString()
         showBiomertricDialog()
     }
 
@@ -21,6 +25,10 @@ class AutenticationActivity : AppCompatActivity() {
     lateinit var biometricPrompt: BiometricPrompt
     lateinit var promptInfo: BiometricPrompt.PromptInfo
     private val CODE_AUTHENTICATION_VERIFICATION = 241
+    var ActType: String? = ""
+    var reciever_id: String? = ""
+    var reciever_profile: String? = ""
+    var reciever_username: String? = ""
     fun showBiomertricDialog(){
         executor = ContextCompat.getMainExecutor(this)
         biometricPrompt = BiometricPrompt(this, executor,
@@ -30,11 +38,23 @@ class AutenticationActivity : AppCompatActivity() {
                     result: BiometricPrompt.AuthenticationResult
                 ) {
                     super.onAuthenticationSucceeded(result)
-                    val intent = Intent(this@AutenticationActivity, MainActivity::class.java)
-                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK)
-                    intent.putExtra("resultAUTH", "true")
-                    startActivity(intent)
-                    finish()
+                    if(ActType == "notification"){
+                        val intent = Intent(this@AutenticationActivity, MessageChatActivity::class.java)
+                        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK)
+                        intent.putExtra("resultAUTH", "true")
+                        intent.putExtra("reciever_id", reciever_id)
+                        intent.putExtra("reciever_profile", reciever_profile)
+                        intent.putExtra("reciever_username", reciever_username)
+                        startActivity(intent)
+                        finish()
+                    }else{
+                        val intent = Intent(this@AutenticationActivity, MainActivity::class.java)
+                        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK)
+                        intent.putExtra("resultAUTH", "true")
+                        startActivity(intent)
+                        finish()
+                    }
+
                 }
 
                 override fun onAuthenticationError(errorCode: Int, errString: CharSequence) {
@@ -47,11 +67,22 @@ class AutenticationActivity : AppCompatActivity() {
                         )
                         startActivityForResult(i, CODE_AUTHENTICATION_VERIFICATION)
                     } else {
-                        val intent = Intent(this@AutenticationActivity, MainActivity::class.java)
-                        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK)
-                        intent.putExtra("resultAUTH", "true")
-                        startActivity(intent)
-                        finish()
+                        if(ActType == "notification"){
+                            val intent = Intent(this@AutenticationActivity, MessageChatActivity::class.java)
+                            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK)
+                            intent.putExtra("resultAUTH", "true")
+                            intent.putExtra("reciever_id", reciever_id)
+                            intent.putExtra("reciever_profile", reciever_profile)
+                            intent.putExtra("reciever_username", reciever_username)
+                            startActivity(intent)
+                            finish()
+                        }else{
+                            val intent = Intent(this@AutenticationActivity, MainActivity::class.java)
+                            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK)
+                            intent.putExtra("resultAUTH", "true")
+                            startActivity(intent)
+                            finish()
+                        }
                     }
                 }
 
@@ -69,11 +100,22 @@ class AutenticationActivity : AppCompatActivity() {
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         if (resultCode == RESULT_OK && requestCode == CODE_AUTHENTICATION_VERIFICATION) {
-            val intent = Intent(this, MainActivity::class.java)
-            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK)
-            intent.putExtra("resultAUTH", "true")
-            startActivity(intent)
-            finish()
+            if(ActType == "notification"){
+                val intent = Intent(this@AutenticationActivity, MessageChatActivity::class.java)
+                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK)
+                intent.putExtra("resultAUTH", "true")
+                intent.putExtra("reciever_id", reciever_id)
+                intent.putExtra("reciever_profile", reciever_profile)
+                intent.putExtra("reciever_username", reciever_username)
+                startActivity(intent)
+                finish()
+            }else{
+                val intent = Intent(this@AutenticationActivity, MainActivity::class.java)
+                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK)
+                intent.putExtra("resultAUTH", "true")
+                startActivity(intent)
+                finish()
+            }
         }
     }
 }
