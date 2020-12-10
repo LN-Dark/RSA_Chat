@@ -60,7 +60,7 @@ class RegisterActivity : AppCompatActivity() {
                     userHashMap["username"] = username.text.toString()
                     userHashMap["email"] = email.text.toString()
                     userHashMap["profile"] = "https://firebasestorage.googleapis.com/v0/b/rsachat-73eff.appspot.com/o/profile_1.png?alt=media&token=1eba6856-99ec-4d5f-9eed-47561c59f11c"
-                    userHashMap["cover"] = "https://firebasestorage.googleapis.com/v0/b/rsachat-73eff.appspot.com/o/coverdefault.jpg?alt=media&token=30312c5f-a8a2-4ed6-91ed-470d89c3a7bc"
+                    userHashMap["cover"] = "https://img1.goodfon.com/original/1920x1080/b/6d/material-desing-color-7228.jpg"
                     userHashMap["status"] = "offline"
                     userHashMap["search"] = username.text.toString().toLowerCase(Locale.ROOT)
                     userHashMap["facebook"] = "https://m.facebook.com"
@@ -88,7 +88,6 @@ class RegisterActivity : AppCompatActivity() {
                             Toast.makeText(this@RegisterActivity, getString(R.string.errormessage) + task1.exception!!.message, Toast.LENGTH_LONG).show()
                         }
                     }
-
                 }else{
                     Toast.makeText(this@RegisterActivity, getString(R.string.errormessage) + task.exception!!.message.toString(), Toast.LENGTH_LONG).show()
                 }

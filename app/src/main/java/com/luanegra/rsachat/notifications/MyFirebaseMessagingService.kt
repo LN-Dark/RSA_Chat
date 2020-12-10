@@ -113,7 +113,6 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
                 val oreoNotification = OreoNotification(context)
                 val builder: Notification.Builder = oreoNotification.getOreoNotification(title, body, pedingIntent, defaultSound, icon)
                 var i = 0
-
                 if(j > 0){
                     i = j
                 }
@@ -133,7 +132,6 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
         super.onNewToken(p0)
         val firebaseUser = FirebaseAuth.getInstance().currentUser
         val refreshToken = FirebaseInstanceId.getInstance().token
-
         if(firebaseUser != null){
             updateToken(refreshToken)
         }

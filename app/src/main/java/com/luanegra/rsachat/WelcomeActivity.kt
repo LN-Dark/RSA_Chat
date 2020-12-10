@@ -119,7 +119,7 @@ class WelcomeActivity : AppCompatActivity() {
                 userHashMap["username"] = account.displayName.toString()
                 userHashMap["email"] = account.email.toString()
                 userHashMap["profile"] = account.photoUrl.toString()
-                userHashMap["cover"] = "https://firebasestorage.googleapis.com/v0/b/rsachat-73eff.appspot.com/o/coverdefault.jpg?alt=media&token=30312c5f-a8a2-4ed6-91ed-470d89c3a7bc"
+                userHashMap["cover"] = "https://img1.goodfon.com/original/1920x1080/b/6d/material-desing-color-7228.jpg"
                 userHashMap["status"] = "offline"
                 userHashMap["search"] = account.displayName.toString().toLowerCase(Locale.ROOT)
                 userHashMap["facebook"] = "https://m.facebook.com"
