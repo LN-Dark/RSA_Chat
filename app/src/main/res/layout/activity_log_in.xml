@@ -29,34 +29,57 @@ android:gravity="center_horizontal"
 android:orientation="vertical"
 android:layout_centerInParent="true">
 
-<EditText
-    android:id="@+id/email_login"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:inputType="textEmailAddress"
-    android:hint="@string/email"
-    android:textColor="@color/white"
-    android:textColorHint="@color/white">
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/email_login_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:inputType="textEmailAddress"
+        android:hint="@string/email"
+        android:textColorHint="@color/colorgrey"
+        app:boxBackgroundColor="@color/colorChatRight"
+        app:boxCornerRadiusTopEnd="15dp"
+        app:boxCornerRadiusTopStart="15dp"
+        >
 
-</EditText>
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/email_login"
+            android:layout_width="match_parent"
+            android:inputType="textEmailAddress"
+            android:layout_height="wrap_content"
+            android:textColor="@color/colorProfile"
+            />
 
-<EditText
-    android:id="@+id/password_login"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:inputType="textPassword"
-    android:hint="@string/password"
-    android:layout_marginTop="10dp"
-    android:textColor="@color/white"
-    android:textColorHint="@color/white">
+    </com.google.android.material.textfield.TextInputLayout>
 
-</EditText>
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/password_login_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="@string/password"
+        android:layout_marginTop="15dp"
+        android:inputType="textPassword"
+        android:textColorHint="@color/colorgrey"
+        app:boxBackgroundColor="@color/colorChatRight"
+        app:boxCornerRadiusTopEnd="15dp"
+        app:boxCornerRadiusTopStart="15dp"
+        >
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/password_login"
+            android:layout_width="match_parent"
+            android:inputType="textPassword"
+            android:layout_height="wrap_content"
+            android:textColor="@color/colorProfile"
+            />
+
+    </com.google.android.material.textfield.TextInputLayout>
 
 <Button
     android:id="@+id/btn_login"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:text="@string/login"
+    android:elevation="8dp"
     android:layout_marginTop="25dp"
     android:textColor="@color/white"
     android:textColorHint="@color/white"

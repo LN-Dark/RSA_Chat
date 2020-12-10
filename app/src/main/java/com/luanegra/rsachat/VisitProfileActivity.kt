@@ -11,6 +11,7 @@ import android.widget.EditText
 import android.widget.ImageView
 import android.widget.TextView
 import coil.load
+import com.google.android.material.textfield.TextInputEditText
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.database.*
@@ -35,11 +36,12 @@ class VisitProfileActivity : AppCompatActivity() {
             finish()
         }
         val cover_visitprofile: ImageView = findViewById(R.id.cover_visitprofile)
-        val profileimage_visitprofile: de.hdodenhof.circleimageview.CircleImageView = findViewById(R.id.profileimage_visitprofile)
+        val profileimage_visitprofile: CircleImageView = findViewById(R.id.profileimage_visitprofile)
         val facebook_visitprofile: ImageView = findViewById(R.id.facebook_visitprofile)
         val instagram_visitprofile: ImageView = findViewById(R.id.instagram_visitprofile)
         val website_visitprofile: ImageView = findViewById(R.id.website_visitprofile)
         val btn_sendmessage: Button = findViewById(R.id.button_sendmessageUser)
+        val aboutme_visitprofile: TextInputEditText = findViewById(R.id.aboutme_visitprofile)
         firebaseUser = FirebaseAuth.getInstance().currentUser
         refUsers = FirebaseDatabase.getInstance().reference.child("users").child(intent.getStringExtra("reciever_id").toString())
         refUsers!!.addValueEventListener(object : ValueEventListener{
@@ -63,6 +65,7 @@ class VisitProfileActivity : AppCompatActivity() {
                         mAlertDialog.dismiss()
                     }
                 }
+                aboutme_visitprofile.setText(user.getaboutMe())
                 cover_visitprofile.load(user!!.getcover())
                 supportActionBar!!.title = user!!.getusername()
                 facebook_visitprofile.setOnClickListener {

@@ -13,6 +13,7 @@ import androidx.recyclerview.widget.RecyclerView
 import coil.load
 import com.google.android.gms.tasks.Continuation
 import com.google.android.gms.tasks.Task
+import com.google.android.material.textfield.TextInputEditText
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.database.*
@@ -66,7 +67,7 @@ class MessageChatActivity : AppCompatActivity() {
         userIdVisit = intent.getStringExtra("reciever_id").toString()
         firebaseUser = FirebaseAuth.getInstance().currentUser
 
-        val write_messagechat: EditText = findViewById(R.id.write_messagechat)
+        val write_messagechat: TextInputEditText = findViewById(R.id.write_messagechat)
         val send_messagechat: ImageView = findViewById(R.id.send_messagechat)
         val reciever_profileImage: de.hdodenhof.circleimageview.CircleImageView = findViewById(R.id.profileimage_messagechat)
         val reciever_UserName: TextView = findViewById(R.id.username_messagechat)

@@ -68,6 +68,7 @@ class RegisterActivity : AppCompatActivity() {
                     userHashMap["facebook"] = "https://m.facebook.com"
                     userHashMap["instagram"] = "https://m.instagram.com"
                     userHashMap["website"] = "https://www.google.pt"
+                    userHashMap["aboutMe"] = getString(R.string.aboutme)
                     val gerarChaves = GenerateKeys()
                     val listKeys: List<String>?
                     listKeys = gerarChaves.generateKeys()

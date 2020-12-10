@@ -10,6 +10,7 @@ import android.view.ViewGroup
 import android.widget.EditText
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.google.android.material.textfield.TextInputEditText
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.*
 import com.luanegra.rsachat.R
@@ -21,7 +22,7 @@ class SearchFragment : Fragment() {
     private var userAdapter: UserAdapter? = null
     private var mUsers: List<Users>?= null
     private var recycler_search: RecyclerView? = null
-    private var txt_search: EditText? = null
+    private var txt_search: TextInputEditText? = null
 
     override fun onCreateView(
         inflater: LayoutInflater,

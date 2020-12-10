@@ -51,4 +51,7 @@
     <string name="youareblockedby">You are blocked by&#160;</string>
     <string name="yourareblocked">You are blocked</string>
     <string name="unblock">Unblock</string>
+    <string name="aboutme">About Me…</string>
+    <string name="aboutmewillnotbesaved">About Me Will not be saved because its empty…</string>
+    <string name="about_mehint">About Me</string>
 </resources>

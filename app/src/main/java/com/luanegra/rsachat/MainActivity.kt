@@ -21,6 +21,7 @@ import com.luanegra.rsachat.fragments.SearchFragment
 import com.luanegra.rsachat.fragments.SettingsFragment
 import com.luanegra.rsachat.modelclasses.Chat
 import com.luanegra.rsachat.modelclasses.Users
+import de.hdodenhof.circleimageview.CircleImageView
 import java.util.ArrayList
 
 class MainActivity : AppCompatActivity() {
@@ -43,35 +44,15 @@ class MainActivity : AppCompatActivity() {
         val viewPager: ViewPager = findViewById(R.id.view_pager)
 
         val user_name: TextView = findViewById<TextView>(R.id.user_name)
-        val profile_image: de.hdodenhof.circleimageview.CircleImageView = findViewById<de.hdodenhof.circleimageview.CircleImageView>(R.id.profile_image)
+        val profile_image: CircleImageView = findViewById<CircleImageView>(R.id.profile_image)
 
-        val chatListsRef = FirebaseDatabase.getInstance().reference.child("Chats")
-        chatListsRef.addValueEventListener(object : ValueEventListener{
-            override fun onDataChange(snapshot: DataSnapshot) {
-                val viewPagerAdapter = ViewPagerAdapter(supportFragmentManager)
-                var countUnread = 0
-                for(datasnap in snapshot.children){
-                    val chat = datasnap.getValue(Chat::class.java)
-                    if(chat!!.getreciever().equals(firebaseUser!!.uid) && !chat.getisseen()!!){
-                        countUnread += 1
-                    }
-                }
-                if(countUnread == 0){
-                    viewPagerAdapter.addFragment(ChatFragment(), getString(R.string.chats))
-                }else{
-                    viewPagerAdapter.addFragment(ChatFragment(), "($countUnread) " + getString(R.string.chats))
-                }
-                viewPagerAdapter.addFragment(SearchFragment(), getString(R.string.search))
-                viewPagerAdapter.addFragment(SettingsFragment(), getString(R.string.myprofile))
-                viewPager.adapter = viewPagerAdapter
-                tableLayout.setupWithViewPager(viewPager)
-            }
+        val viewPagerAdapter = ViewPagerAdapter(supportFragmentManager)
 
-            override fun onCancelled(error: DatabaseError) {
-
-            }
-
-        })
+        viewPagerAdapter.addFragment(ChatFragment(), getString(R.string.chats))
+        viewPagerAdapter.addFragment(SearchFragment(), getString(R.string.search))
+        viewPagerAdapter.addFragment(SettingsFragment(), getString(R.string.myprofile))
+        viewPager.adapter = viewPagerAdapter
+        tableLayout.setupWithViewPager(viewPager)
 
         refUsers!!.addValueEventListener(object : ValueEventListener{
             override fun onDataChange(snapshot: DataSnapshot) {

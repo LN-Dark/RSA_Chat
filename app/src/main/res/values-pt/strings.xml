@@ -52,4 +52,7 @@
     <string name="youareblockedby">Estas bloqueado por&#160;</string>
     <string name="yourareblocked">Estas bloqueado</string>
     <string name="unblock">Desbloquear</string>
+    <string name="aboutme">Sobre mim…</string>
+    <string name="aboutmewillnotbesaved">Sobre mim não vai ser guardado porque está em branco…</string>
+    <string name="about_mehint">Sobre mim</string>
 </resources>

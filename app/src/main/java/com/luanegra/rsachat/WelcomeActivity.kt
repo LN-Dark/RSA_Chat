@@ -127,12 +127,12 @@ class WelcomeActivity : AppCompatActivity() {
                         userHashMap["facebook"] = "https://m.facebook.com"
                         userHashMap["instagram"] = "https://m.instagram.com"
                         userHashMap["website"] = "https://www.google.pt"
+                        userHashMap["aboutMe"] = getString(R.string.aboutme)
                         val gerarChaves = GenerateKeys()
                         var listKeys: List<String>?
                         listKeys = ArrayList()
                         listKeys = gerarChaves.generateKeys()
                         userHashMap["publicKey"] = listKeys.get(0)
-
                         val sharedPreference =  getSharedPreferences("RSA_CHAT", Context.MODE_PRIVATE)
                         val editor = sharedPreference.edit()
                         editor.putString("privateKey",listKeys.get(1))

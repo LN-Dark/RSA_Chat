@@ -12,6 +12,7 @@ class Users {
     private var instagram: String = ""
     private var website: String = ""
     private var publicKey: String = ""
+    private var aboutMe: String = ""
 
 
 
@@ -26,7 +27,8 @@ class Users {
         facebook: String,
         instagram: String,
         website: String,
-        publicKey: String
+        publicKey: String,
+        aboutMe: String
     ) {
         this.uid = uid
         this.username = username
@@ -39,11 +41,12 @@ class Users {
         this.instagram = instagram
         this.website = website
         this.publicKey = publicKey
+        this.aboutMe = aboutMe
     }
 
     constructor()
 
-    fun getUid(): String?{
+    fun getUid(): String {
         return uid
     }
 
@@ -51,42 +54,42 @@ class Users {
         this.uid = uid
     }
 
-    fun getusername(): String?{
+    fun getusername(): String {
         return username
     }
 
     fun setusername(username: String){
         this.username = username
     }
-    fun getemail(): String?{
+    fun getemail(): String {
         return email
     }
 
     fun setemail(email: String){
         this.email = email
     }
-    fun getprofile(): String?{
+    fun getprofile(): String {
         return profile
     }
 
     fun setprofile(profile: String){
         this.profile = profile
     }
-    fun getcover(): String?{
+    fun getcover(): String {
         return cover
     }
 
     fun setcover(cover: String){
         this.cover = cover
     }
-    fun getstatus(): String?{
+    fun getstatus(): String {
         return status
     }
 
     fun setstatus(status: String){
         this.status = status
     }
-    fun getsearch(): String?{
+    fun getsearch(): String {
         return search
     }
 
@@ -94,21 +97,21 @@ class Users {
         this.search = search
     }
 
-    fun getfacebook(): String?{
+    fun getfacebook(): String {
         return facebook
     }
 
     fun setfacebook(facebook: String){
         this.facebook = facebook
     }
-    fun getinstagram(): String?{
+    fun getinstagram(): String {
         return instagram
     }
 
     fun setinstagram(instagram: String){
         this.instagram = instagram
     }
-    fun getwebsite(): String?{
+    fun getwebsite(): String {
         return website
     }
 
@@ -116,12 +119,20 @@ class Users {
         this.website = website
     }
 
-    fun getpublicKey(): String?{
+    fun getpublicKey(): String {
         return publicKey
     }
 
     fun setpublicKey(publicKey: String){
         this.publicKey = publicKey
+    }
+
+    fun getaboutMe(): String {
+        return aboutMe
+    }
+
+    fun setaboutMe(aboutMe: String){
+        this.aboutMe = aboutMe
     }
 
 }

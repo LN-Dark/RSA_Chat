@@ -11,6 +11,7 @@ import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.gms.common.SignInButton
+import com.google.android.material.textfield.TextInputEditText
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
@@ -39,8 +40,8 @@ class LogInActivity : AppCompatActivity() {
     }
 
     private fun loginUser() {
-        val email: EditText = findViewById<EditText>(R.id.email_login)
-        val password: EditText = findViewById<EditText>(R.id.password_login)
+        val email: TextInputEditText = findViewById<TextInputEditText>(R.id.email_login)
+        val password: TextInputEditText = findViewById<TextInputEditText>(R.id.password_login)
 
         if(email.text.toString() == ""){
             Toast.makeText(this@LogInActivity, getString(R.string.writeemail), Toast.LENGTH_LONG).show()

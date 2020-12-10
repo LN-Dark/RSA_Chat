@@ -36,15 +36,50 @@
              android:scaleType="centerCrop"
              android:src="@drawable/profile_1" />
 
-         <EditText
-             android:id="@+id/username_settings"
+
+         <com.google.android.material.textfield.TextInputLayout
+             android:id="@+id/username_layout_settings"
              android:layout_width="match_parent"
              android:layout_height="wrap_content"
              android:layout_below="@+id/profileimage_settings"
              android:layout_margin="20dp"
              android:hint="@string/username"
-             android:textColor="@color/colorProfile"
-             android:textColorHint="@color/colorPrimary"/>
+             android:textColorHint="@color/colorgrey"
+             app:boxBackgroundColor="@color/colorSoftDark"
+             app:boxCornerRadiusTopEnd="15dp"
+             app:boxCornerRadiusTopStart="15dp">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/username_settings"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textColor="@color/colorProfile"/>
+
+         </com.google.android.material.textfield.TextInputLayout>
+
+         <com.google.android.material.textfield.TextInputLayout
+             android:id="@+id/aboutme_layout_settings"
+             android:layout_width="match_parent"
+             android:layout_height="wrap_content"
+             android:layout_below="@+id/username_layout_settings"
+             android:layout_marginTop="10dp"
+             android:layout_marginStart="20dp"
+             android:layout_marginEnd="20dp"
+             android:layout_marginBottom="20dp"
+             android:textColorHint="@color/colorgrey"
+             app:boxBackgroundColor="@color/colorSoftDark"
+             app:boxCornerRadiusTopEnd="15dp"
+             app:boxCornerRadiusTopStart="15dp"
+             android:hint="@string/about_mehint">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/aboutme_settings"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textColor="@color/colorProfile"
+                />
+
+         </com.google.android.material.textfield.TextInputLayout>
 
       </RelativeLayout>
    </androidx.cardview.widget.CardView>

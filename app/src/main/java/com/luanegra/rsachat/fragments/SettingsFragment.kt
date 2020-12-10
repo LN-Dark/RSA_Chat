@@ -14,11 +14,14 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.EditText
 import android.widget.ImageView
+import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import coil.load
 import com.google.android.gms.tasks.Continuation
 import com.google.android.gms.tasks.Task
+import com.google.android.material.textfield.TextInputEditText
+import com.google.android.material.textfield.TextInputLayout
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.database.*
@@ -51,19 +54,20 @@ class SettingsFragment : Fragment() {
         storageCoverRef = FirebaseStorage.getInstance().reference.child("coverImages")
         val cover_settings: ImageView = view.findViewById(R.id.cover_settings)
         val profileimage_settings: de.hdodenhof.circleimageview.CircleImageView = view.findViewById(R.id.profileimage_settings)
-        val username: EditText = view.findViewById(R.id.username_settings)
+        val username: TextInputEditText = view.findViewById(R.id.username_settings)
         val facebook_settings: ImageView = view.findViewById(R.id.facebook_settings)
         val instagram_settings: ImageView = view.findViewById(R.id.instagram_settings)
         val website_settings: ImageView = view.findViewById(R.id.website_settings)
+        val aboutme_settings: TextInputEditText = view.findViewById(R.id.aboutme_settings)
         refUsers!!.addValueEventListener(object: ValueEventListener{
             override fun onDataChange(snapshot: DataSnapshot) {
                 if(snapshot.exists()){
                     val newuser: Users? = snapshot.getValue(Users::class.java)
                     if(context != null){
                         cover_settings.load(newuser!!.getcover())
-                        profileimage_settings.load(newuser!!.getprofile())
+                        profileimage_settings.load(newuser.getprofile())
                         username.setText(newuser.getusername())
-
+                        aboutme_settings.setText(newuser.getaboutMe())
                         facebook_settings.setOnClickListener {
                             setSocial(0)
                         }
@@ -73,7 +77,7 @@ class SettingsFragment : Fragment() {
                         website_settings.setOnClickListener {
                             setSocial(2)
                         }
-                        username!!.addTextChangedListener(object: TextWatcher {
+                        username.addTextChangedListener(object: TextWatcher {
                             override fun beforeTextChanged(
                                 s: CharSequence?,
                                 start: Int,
@@ -90,12 +94,39 @@ class SettingsFragment : Fragment() {
                                 count: Int
                             ) {
                                 saveName(s.toString())
-                                username.setSelection(username.text.length)
+                                username.setSelection(username.text!!.length)
                             }
 
                             override fun afterTextChanged(s: Editable?) {
                                 saveName(s.toString())
-                                username.setSelection(username.text.length)
+                                username.setSelection(username.text!!.length)
+                            }
+
+                        })
+
+                        aboutme_settings.addTextChangedListener(object: TextWatcher {
+                            override fun beforeTextChanged(
+                                s: CharSequence?,
+                                start: Int,
+                                count: Int,
+                                after: Int
+                            ) {
+
+                            }
+
+                            override fun onTextChanged(
+                                s: CharSequence?,
+                                start: Int,
+                                before: Int,
+                                count: Int
+                            ) {
+                                saveAboutme(s.toString())
+                                aboutme_settings.setSelection(aboutme_settings.text!!.length)
+                            }
+
+                            override fun afterTextChanged(s: Editable?) {
+                                saveAboutme(s.toString())
+                                aboutme_settings.setSelection(aboutme_settings.text!!.length)
                             }
 
                         })
@@ -117,17 +148,22 @@ class SettingsFragment : Fragment() {
 
         })
 
-
         return view
     }
 
     private fun saveName(newUserName: String){
-        if(newUserName.isEmpty()){
-            Toast.makeText(context, getString(R.string.userwillnotbesaved), Toast.LENGTH_SHORT).show()
-        }else{
+        if(!newUserName.isEmpty()){
             val map = HashMap<String, Any>()
             map["username"] = newUserName
             map["search"] = newUserName.toLowerCase()
+            refUsers!!.updateChildren(map)
+        }
+    }
+
+    private fun saveAboutme(newAboutme: String){
+        if(!newAboutme.isEmpty()){
+            val map = HashMap<String, Any>()
+            map["aboutMe"] = newAboutme
             refUsers!!.updateChildren(map)
         }
     }
@@ -152,30 +188,30 @@ class SettingsFragment : Fragment() {
             edittext.hint = "e.g www.google.pt"
         }
         builder.setView(edittext)
-        builder.setPositiveButton(getString(R.string.create), DialogInterface.OnClickListener{
-            dialog, which ->
-            if(edittext.text.toString() == ""){
-                Toast.makeText(context, getString(R.string.writesomething), Toast.LENGTH_LONG).show()
-            }else{
+        builder.setPositiveButton(getString(R.string.create)) { dialog, which ->
+            if (edittext.text.toString() == "") {
+                Toast.makeText(context, getString(R.string.writesomething), Toast.LENGTH_LONG)
+                    .show()
+            } else {
                 val str: String = edittext.text.toString()
-                if(type == 0){
+                if (type == 0) {
                     map["facebook"] = "https://m.facebook.com/$str"
-                }else if(type == 1){
+                } else if (type == 1) {
                     map["instagram"] = "https://m.instagram.com/$str"
-                }else if(type == 2){
+                } else if (type == 2) {
                     map["website"] = "https://$str"
                 }
-                refUsers!!.updateChildren(map).addOnCompleteListener {task ->
-                    if (task.isSuccessful){
-                        Toast.makeText(context, getString(R.string.updated), Toast.LENGTH_LONG).show()
+                refUsers!!.updateChildren(map).addOnCompleteListener { task ->
+                    if (task.isSuccessful) {
+                        Toast.makeText(context, getString(R.string.updated), Toast.LENGTH_LONG)
+                            .show()
                     }
                 }
             }
-        })
-        builder.setNegativeButton(getString(R.string.cancel), DialogInterface.OnClickListener{
-                dialog, which ->
+        }
+        builder.setNegativeButton(getString(R.string.cancel)) { dialog, which ->
             dialog.cancel()
-        })
+        }
         builder.show()
     }
 
@@ -244,7 +280,5 @@ class SettingsFragment : Fragment() {
                }
            }
         }
-
-
     }
 }
