@@ -55,4 +55,7 @@
     <string name="aboutme">Sobre mim…</string>
     <string name="aboutmewillnotbesaved">Sobre mim não vai ser guardado porque está em branco…</string>
     <string name="about_mehint">Sobre mim</string>
+    <string name="fingerprintlogin">Desbloquear</string>
+    <string name="loginusingfingerprint">Desbloqueia usando a segurança do Smartphone</string>
+    <string name="authenticationrequired">Autenticação obrigatória</string>
 </resources>

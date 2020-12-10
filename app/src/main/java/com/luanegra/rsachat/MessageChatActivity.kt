@@ -45,6 +45,7 @@ class MessageChatActivity : AppCompatActivity() {
     var apiService: APIService? = null
     var publicKeyVisit: String = ""
     var recieverName: String = ""
+    var showNotificationUser: Boolean = true
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -77,8 +78,8 @@ class MessageChatActivity : AppCompatActivity() {
         val linearLayoutManager = LinearLayoutManager(this)
         linearLayoutManager.stackFromEnd = true
         recycler_messagechat.layoutManager = linearLayoutManager
-        val refblockedUsers = FirebaseDatabase.getInstance().reference.child("BlockedUsers").child(userIdVisit)
-        refblockedUsers.addValueEventListener(object: ValueEventListener{
+        val refblockedUsers = FirebaseDatabase.getInstance().reference
+        refblockedUsers.child("BlockedUsers").child(userIdVisit).addValueEventListener(object: ValueEventListener{
             override fun onDataChange(snapshot: DataSnapshot) {
                 if (snapshot.exists()){
                     for(dataSnapshot in snapshot.children){
@@ -94,6 +95,22 @@ class MessageChatActivity : AppCompatActivity() {
                     write_messagechat.isEnabled = true
                     send_messagechat.isEnabled = true
                     btn_atach_image.isEnabled = true
+                }
+            }
+
+            override fun onCancelled(error: DatabaseError) {
+
+            }
+
+        })
+
+        refblockedUsers.child("users").child(userIdVisit).addValueEventListener(object: ValueEventListener{
+            override fun onDataChange(snapshot: DataSnapshot) {
+                if (snapshot.exists()){
+                    for(dataSnapshot in snapshot.children){
+                        val userID: Users? = dataSnapshot.getValue(Users::class.java)
+                        showNotificationUser = userID!!.getnotificationsShow()
+                    }
                 }
             }
 
@@ -219,46 +236,47 @@ class MessageChatActivity : AppCompatActivity() {
             }
 
         })
-
     }
 
     private fun sendNotification(recieverId: String, getusername: String?, message: String) {
-        val ref = FirebaseDatabase.getInstance().reference.child("Tokens")
-        val query = ref.orderByKey().equalTo(recieverId)
+        if(showNotificationUser){
+            val ref = FirebaseDatabase.getInstance().reference.child("Tokens")
+            val query = ref.orderByKey().equalTo(recieverId)
 
-        query.addValueEventListener(object: ValueEventListener {
-            override fun onDataChange(snapshot: DataSnapshot) {
-                for(dataSnapshot in snapshot.children){
-                    val token: Token? = dataSnapshot.getValue(Token::class.java)
-                    val data  = Data(firebaseUser!!.uid, R.mipmap.ic_launcher, "$message", "New message from $getusername", userIdVisit)
-                    val sender = Sender(data, token!!.getToken().toString())
-                    apiService!!.sendNotification(sender).enqueue(object: Callback<MyResponse>{
-                        override fun onResponse(
-                            call: Call<MyResponse>,
-                            response: Response<MyResponse>
-                        ) {
-                            if(response.code() == 200){
-                                if(response.body()!!.success != 1){
-                                    Toast.makeText(this@MessageChatActivity, getString(R.string.failednothinghappened), Toast.LENGTH_LONG).show()
+            query.addValueEventListener(object: ValueEventListener {
+                override fun onDataChange(snapshot: DataSnapshot) {
+                    for(dataSnapshot in snapshot.children){
+                        val token: Token? = dataSnapshot.getValue(Token::class.java)
+                        val data  = Data(firebaseUser!!.uid, R.mipmap.ic_launcher, "$message", "New message from $getusername", userIdVisit)
+                        val sender = Sender(data, token!!.getToken().toString())
+                        apiService!!.sendNotification(sender).enqueue(object: Callback<MyResponse>{
+                            override fun onResponse(
+                                call: Call<MyResponse>,
+                                response: Response<MyResponse>
+                            ) {
+                                if(response.code() == 200){
+                                    if(response.body()!!.success != 1){
+                                        Toast.makeText(this@MessageChatActivity, getString(R.string.failednothinghappened), Toast.LENGTH_LONG).show()
+                                    }
                                 }
+
                             }
 
-                        }
+                            override fun onFailure(call: Call<MyResponse>, t: Throwable) {
 
-                        override fun onFailure(call: Call<MyResponse>, t: Throwable) {
+                            }
 
-                        }
+                        })
 
-                    })
 
+                    }
+                }
+
+                override fun onCancelled(error: DatabaseError) {
 
                 }
-            }
-
-            override fun onCancelled(error: DatabaseError) {
-
-            }
-        })
+            })
+        }
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {

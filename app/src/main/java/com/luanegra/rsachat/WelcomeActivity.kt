@@ -8,6 +8,8 @@ import android.util.Log
 import android.view.View
 import android.widget.Button
 import android.widget.Toast
+import androidx.biometric.BiometricPrompt
+import androidx.core.content.ContextCompat
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
@@ -22,6 +24,7 @@ import com.google.firebase.auth.GoogleAuthProvider
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
 import com.luanegra.rsachat.RSA.GenerateKeys
+import java.util.concurrent.Executor
 
 class WelcomeActivity : AppCompatActivity() {
 
@@ -111,49 +114,47 @@ class WelcomeActivity : AppCompatActivity() {
 
     private fun firebaseAuthWithGoogle(account: GoogleSignInAccount) {
         val credential = GoogleAuthProvider.getCredential(account.idToken, null)
-        mAuth.signInWithCredential(credential)
-                .addOnCompleteListener(this) { task ->
-                    if (task.isSuccessful) {
-                        firebaseUserId = mAuth.currentUser!!.uid
-                        refUsers = FirebaseDatabase.getInstance().reference.child("users").child(firebaseUserId)
-                        val userHashMap = HashMap<String, Any>()
-                        userHashMap["uid"] = firebaseUserId
-                        userHashMap["username"] = account.displayName.toString()
-                        userHashMap["email"] = account.email.toString()
-                        userHashMap["profile"] = account.photoUrl.toString()
-                        userHashMap["cover"] = "https://firebasestorage.googleapis.com/v0/b/rsachat-73eff.appspot.com/o/coverdefault.jpg?alt=media&token=30312c5f-a8a2-4ed6-91ed-470d89c3a7bc"
-                        userHashMap["status"] = "offline"
-                        userHashMap["search"] = account.displayName.toString().toLowerCase()
-                        userHashMap["facebook"] = "https://m.facebook.com"
-                        userHashMap["instagram"] = "https://m.instagram.com"
-                        userHashMap["website"] = "https://www.google.pt"
-                        userHashMap["aboutMe"] = getString(R.string.aboutme)
-                        val gerarChaves = GenerateKeys()
-                        var listKeys: List<String>?
-                        listKeys = ArrayList()
-                        listKeys = gerarChaves.generateKeys()
-                        userHashMap["publicKey"] = listKeys.get(0)
-                        val sharedPreference =  getSharedPreferences("RSA_CHAT", Context.MODE_PRIVATE)
-                        val editor = sharedPreference.edit()
-                        editor.putString("privateKey",listKeys.get(1))
-                        editor.putString("publicKey",listKeys.get(0))
-                        editor.apply()
-                        refUsers.updateChildren(userHashMap).addOnCompleteListener { task ->
-                            if(task.isSuccessful){
-                                val intent = Intent(this@WelcomeActivity, MainActivity::class.java)
-                                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK)
-                                startActivity(intent)
-                                finish()
-                            }else{
-                                Toast.makeText(this@WelcomeActivity, getString(R.string.errormessage) + task.exception!!.message, Toast.LENGTH_LONG).show()
-                            }
-                        }
-                    } else {
+        mAuth.signInWithCredential(credential).addOnCompleteListener(this) { task ->
+            if (task.isSuccessful) {
+                firebaseUserId = mAuth.currentUser!!.uid
+                refUsers = FirebaseDatabase.getInstance().reference.child("users").child(firebaseUserId)
+                val userHashMap = HashMap<String, Any>()
+                userHashMap["uid"] = firebaseUserId
+                userHashMap["username"] = account.displayName.toString()
+                userHashMap["email"] = account.email.toString()
+                userHashMap["profile"] = account.photoUrl.toString()
+                userHashMap["cover"] = "https://firebasestorage.googleapis.com/v0/b/rsachat-73eff.appspot.com/o/coverdefault.jpg?alt=media&token=30312c5f-a8a2-4ed6-91ed-470d89c3a7bc"
+                userHashMap["status"] = "offline"
+                userHashMap["search"] = account.displayName.toString().toLowerCase()
+                userHashMap["facebook"] = "https://m.facebook.com"
+                userHashMap["instagram"] = "https://m.instagram.com"
+                userHashMap["website"] = "https://www.google.pt"
+                userHashMap["aboutMe"] = getString(R.string.aboutme)
+                val gerarChaves = GenerateKeys()
+                var listKeys: List<String>?
+                listKeys = ArrayList()
+                listKeys = gerarChaves.generateKeys()
+                userHashMap["publicKey"] = listKeys.get(0)
+                val sharedPreference =  getSharedPreferences("RSA_CHAT", Context.MODE_PRIVATE)
+                val editor = sharedPreference.edit()
+                editor.putString("privateKey",listKeys.get(1))
+                editor.putString("publicKey",listKeys.get(0))
+                editor.apply()
+                refUsers.updateChildren(userHashMap).addOnCompleteListener { task ->
+                    if(task.isSuccessful){
+                        val intent = Intent(this@WelcomeActivity, MainActivity::class.java)
+                        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK)
+                        startActivity(intent)
+                        finish()
+                    }else{
                         Toast.makeText(this@WelcomeActivity, getString(R.string.errormessage) + task.exception!!.message, Toast.LENGTH_LONG).show()
                     }
                 }
+            } else {
+                Toast.makeText(this@WelcomeActivity, getString(R.string.errormessage) + task.exception!!.message, Toast.LENGTH_LONG).show()
+            }
+        }
+
     }
-
-
 
 }

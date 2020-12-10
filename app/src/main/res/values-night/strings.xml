@@ -55,4 +55,7 @@
     <string name="aboutme">About Me…</string>
     <string name="aboutmewillnotbesaved">About Me Will not be saved because its empty…</string>
     <string name="about_mehint">About Me</string>
+    <string name="fingerprintlogin">Unlock</string>
+    <string name="loginusingfingerprint">Unlock using device security</string>
+    <string name="authenticationrequired">Authentication required</string>
 </resources>

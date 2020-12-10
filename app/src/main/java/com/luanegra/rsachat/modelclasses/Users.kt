@@ -13,6 +13,7 @@ class Users {
     private var website: String = ""
     private var publicKey: String = ""
     private var aboutMe: String = ""
+    private var notificationsShow: Boolean = true
 
 
 
@@ -28,7 +29,8 @@ class Users {
         instagram: String,
         website: String,
         publicKey: String,
-        aboutMe: String
+        aboutMe: String,
+        notificationsShow: Boolean
     ) {
         this.uid = uid
         this.username = username
@@ -42,6 +44,7 @@ class Users {
         this.website = website
         this.publicKey = publicKey
         this.aboutMe = aboutMe
+        this.notificationsShow = notificationsShow
     }
 
     constructor()
@@ -133,6 +136,14 @@ class Users {
 
     fun setaboutMe(aboutMe: String){
         this.aboutMe = aboutMe
+    }
+
+    fun getnotificationsShow(): Boolean {
+        return notificationsShow
+    }
+
+    fun setnotificationsShow(notificationsShow: Boolean){
+        this.notificationsShow = notificationsShow
     }
 
 }

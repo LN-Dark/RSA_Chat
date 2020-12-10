@@ -7,6 +7,8 @@ import android.view.Menu
 import android.view.MenuItem
 import android.widget.TextView
 import android.widget.Toast
+import androidx.biometric.BiometricPrompt
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.FragmentPagerAdapter
@@ -23,6 +25,7 @@ import com.luanegra.rsachat.modelclasses.Chat
 import com.luanegra.rsachat.modelclasses.Users
 import de.hdodenhof.circleimageview.CircleImageView
 import java.util.ArrayList
+import java.util.concurrent.Executor
 
 class MainActivity : AppCompatActivity() {
     var refUsers: DatabaseReference? = null
@@ -45,7 +48,6 @@ class MainActivity : AppCompatActivity() {
 
         val user_name: TextView = findViewById<TextView>(R.id.user_name)
         val profile_image: CircleImageView = findViewById<CircleImageView>(R.id.profile_image)
-
         val viewPagerAdapter = ViewPagerAdapter(supportFragmentManager)
 
         viewPagerAdapter.addFragment(ChatFragment(), getString(R.string.chats))
@@ -133,6 +135,14 @@ class MainActivity : AppCompatActivity() {
     override fun onResume() {
         super.onResume()
         updateStatus("online")
+        if(!intent.getStringExtra("resultAUTH").equals("true")){
+            val intent = Intent(this, AutenticationActivity::class.java)
+            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK)
+            startActivity(intent)
+            finish()
+        }else{
+            intent.putExtra("resultAUTH", "false")
+        }
     }
 
     override fun onPause() {

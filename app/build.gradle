@@ -119,6 +119,7 @@ dependencies {
     implementation 'com.google.firebase:firebase-analytics-ktx'
     implementation 'com.nimbusds:nimbus-jose-jwt:9.1.4'
     implementation("io.coil-kt:coil:1.1.0")
+    implementation 'androidx.biometric:biometric:1.0.1'
 
 }
 apply plugin: 'com.google.gms.google-services'

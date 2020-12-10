@@ -20,6 +20,7 @@ import androidx.appcompat.app.AlertDialog
 import coil.load
 import com.google.android.gms.tasks.Continuation
 import com.google.android.gms.tasks.Task
+import com.google.android.material.switchmaterial.SwitchMaterial
 import com.google.android.material.textfield.TextInputEditText
 import com.google.android.material.textfield.TextInputLayout
 import com.google.firebase.auth.FirebaseAuth
@@ -59,6 +60,7 @@ class SettingsFragment : Fragment() {
         val instagram_settings: ImageView = view.findViewById(R.id.instagram_settings)
         val website_settings: ImageView = view.findViewById(R.id.website_settings)
         val aboutme_settings: TextInputEditText = view.findViewById(R.id.aboutme_settings)
+        val check_notifications_settings: SwitchMaterial = view.findViewById(R.id.check_notifications_settings)
         refUsers!!.addValueEventListener(object: ValueEventListener{
             override fun onDataChange(snapshot: DataSnapshot) {
                 if(snapshot.exists()){
@@ -76,6 +78,10 @@ class SettingsFragment : Fragment() {
                         }
                         website_settings.setOnClickListener {
                             setSocial(2)
+                        }
+                        check_notifications_settings.isChecked = newuser.getnotificationsShow()
+                        check_notifications_settings.setOnClickListener {
+                            notificationUpdate(check_notifications_settings.isChecked)
                         }
                         username.addTextChangedListener(object: TextWatcher {
                             override fun beforeTextChanged(
@@ -149,6 +155,12 @@ class SettingsFragment : Fragment() {
         })
 
         return view
+    }
+
+    fun notificationUpdate(isShow: Boolean){
+            val map = HashMap<String, Any>()
+            map["notificationsShow"] = isShow
+            refUsers!!.updateChildren(map)
     }
 
     private fun saveName(newUserName: String){
