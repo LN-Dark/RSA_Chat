@@ -3,7 +3,7 @@
 Simple Chat with RSA encryption
 
 
-* biometric authentication
+* Biometric authentication
 * RSA Encryption in all messages
 * User Profile (Can change cover, profile image, name, about, facebook, instagram and website)
 * Can only send images <= 30mb
