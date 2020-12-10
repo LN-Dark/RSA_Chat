@@ -5,8 +5,6 @@
     <RelativeLayout
         android:layout_width="300dp"
         android:layout_height="wrap_content"
-
-
         android:background="@drawable/round_corners_chat_right"
         android:layout_alignParentEnd="true">
 

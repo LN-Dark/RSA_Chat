@@ -3,26 +3,22 @@ package com.luanegra.rsachat
 import android.app.AlertDialog
 import android.content.Intent
 import android.net.Uri
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.widget.Button
-import android.widget.EditText
 import android.widget.ImageView
-import android.widget.TextView
+import androidx.appcompat.app.AppCompatActivity
 import coil.load
 import com.google.android.material.textfield.TextInputEditText
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.database.*
-import com.google.firebase.storage.FirebaseStorage
-import com.google.firebase.storage.StorageReference
 import com.luanegra.rsachat.modelclasses.Users
 import de.hdodenhof.circleimageview.CircleImageView
 
 class VisitProfileActivity : AppCompatActivity() {
 
-    var refUsers: DatabaseReference? = null
+    private var refUsers: DatabaseReference? = null
     var firebaseUser: FirebaseUser?= null
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -33,6 +29,10 @@ class VisitProfileActivity : AppCompatActivity() {
         supportActionBar!!.title = ""
         supportActionBar!!.setDisplayHomeAsUpEnabled(true)
         toolbar.setNavigationOnClickListener {
+            val intent = Intent(this, MainActivity::class.java)
+            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK)
+            intent.putExtra("resultAUTH", "true")
+            startActivity(intent)
             finish()
         }
         val cover_visitprofile: ImageView = findViewById(R.id.cover_visitprofile)
@@ -59,36 +59,36 @@ class VisitProfileActivity : AppCompatActivity() {
                     val  mAlertDialog = mBuilder.show()
 
                     val dialogimageview: CircleImageView = mDialogView.findViewById(R.id.img_profileimageview)
-                    dialogimageview.load(user!!.getprofile())
+                    dialogimageview.load(user.getprofile())
 
                     mDialogView.findViewById<Button>(R.id.btn_closeprofileimageview).setOnClickListener {
                         mAlertDialog.dismiss()
                     }
                 }
                 aboutme_visitprofile.setText(user.getaboutMe())
-                cover_visitprofile.load(user!!.getcover())
-                supportActionBar!!.title = user!!.getusername()
+                cover_visitprofile.load(user.getcover())
+                supportActionBar!!.title = user.getusername()
                 facebook_visitprofile.setOnClickListener {
-                    val uri = Uri.parse(user!!.getfacebook())
+                    val uri = Uri.parse(user.getfacebook())
                     val intent = Intent(Intent.ACTION_VIEW, uri)
                     startActivity(intent)
 
                 }
                 instagram_visitprofile.setOnClickListener {
-                    val uri = Uri.parse(user!!.getinstagram())
+                    val uri = Uri.parse(user.getinstagram())
                     val intent = Intent(Intent.ACTION_VIEW, uri)
                     startActivity(intent)
                 }
                 website_visitprofile.setOnClickListener {
-                    val uri = Uri.parse(user!!.getwebsite())
+                    val uri = Uri.parse(user.getwebsite())
                     val intent = Intent(Intent.ACTION_VIEW, uri)
                     startActivity(intent)
                 }
                 btn_sendmessage.setOnClickListener{
                     val intent = Intent(this@VisitProfileActivity, MessageChatActivity::class.java)
-                    intent.putExtra("reciever_id", user!!.getUid())
-                    intent.putExtra("reciever_profile", user!!.getprofile())
-                    intent.putExtra("reciever_username", user!!.getusername())
+                    intent.putExtra("reciever_id", user.getUid())
+                    intent.putExtra("reciever_profile", user.getprofile())
+                    intent.putExtra("reciever_username", user.getusername())
                     startActivity(intent)
                     finish()
                 }
@@ -111,10 +111,27 @@ class VisitProfileActivity : AppCompatActivity() {
     override fun onResume() {
         super.onResume()
         updateStatus("online")
+        if(!intent.getStringExtra("resultAUTH").equals("true")){
+            val intent = Intent(this, AutenticationActivity::class.java)
+            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK)
+            startActivity(intent)
+            finish()
+        }else{
+            intent.putExtra("resultAUTH", "false")
+        }
     }
 
     override fun onPause() {
         super.onPause()
         updateStatus("offline")
+    }
+
+    override fun onBackPressed() {
+        super.onBackPressed()
+        val intent = Intent(this, MainActivity::class.java)
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK)
+        intent.putExtra("resultAUTH", "true")
+        startActivity(intent)
+        finish()
     }
 }

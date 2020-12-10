@@ -4,7 +4,6 @@ import android.app.KeyguardManager
 import android.content.Intent
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
-import androidx.biometric.BiometricManager
 import androidx.biometric.BiometricPrompt
 import androidx.core.content.ContextCompat
 import java.util.concurrent.Executor
@@ -21,15 +20,15 @@ class AutenticationActivity : AppCompatActivity() {
         showBiomertricDialog()
     }
 
-    lateinit var executor: Executor
-    lateinit var biometricPrompt: BiometricPrompt
-    lateinit var promptInfo: BiometricPrompt.PromptInfo
+    private lateinit var executor: Executor
+    private lateinit var biometricPrompt: BiometricPrompt
+    private lateinit var promptInfo: BiometricPrompt.PromptInfo
     private val CODE_AUTHENTICATION_VERIFICATION = 241
     var ActType: String? = ""
     var reciever_id: String? = ""
     var reciever_profile: String? = ""
     var reciever_username: String? = ""
-    fun showBiomertricDialog(){
+    private fun showBiomertricDialog(){
         executor = ContextCompat.getMainExecutor(this)
         biometricPrompt = BiometricPrompt(this, executor,
             object : BiometricPrompt.AuthenticationCallback() {

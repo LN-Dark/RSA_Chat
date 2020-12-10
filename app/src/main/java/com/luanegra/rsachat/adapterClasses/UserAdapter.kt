@@ -28,24 +28,22 @@ import de.hdodenhof.circleimageview.CircleImageView
 
 class UserAdapter(mContext: Context, mUserList: List<Users>, isChatCheck: Boolean) : RecyclerView.Adapter<UserAdapter.ViewHolder?>() {
     private val mContext = mContext
-    private val mUserList: List<Users>
+    private val mUserList: List<Users> = mUserList
     private var isChatCheck: Boolean
     private var lastMsg: String = ""
 
     init {
-        this.mUserList = mUserList
         this.isChatCheck = isChatCheck
     }
 
     class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        var txt_userName: TextView
+        var txt_userName: TextView = itemView.findViewById(R.id.user_name_search)
         var txt_lastMessage: TextView
         var image_profile: CircleImageView
         var image_online: CircleImageView
         var image_offline: CircleImageView
 
         init {
-            txt_userName = itemView.findViewById(R.id.user_name_search)
             txt_lastMessage = itemView.findViewById(R.id.message_last_search)
             image_profile = itemView.findViewById(R.id.profile_image_search)
             image_online = itemView.findViewById(R.id.image_online_search)
@@ -63,8 +61,8 @@ class UserAdapter(mContext: Context, mUserList: List<Users>, isChatCheck: Boolea
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        val user: Users? = mUserList[position]
-        holder.txt_userName.text = user!!.getusername()
+        val user: Users = mUserList[position]
+        holder.txt_userName.text = user.getusername()
         holder.image_profile.load(user.getprofile())
 
         holder.itemView.setOnClickListener {
@@ -79,11 +77,12 @@ class UserAdapter(mContext: Context, mUserList: List<Users>, isChatCheck: Boolea
             val  mAlertDialog = mBuilder.show()
 
             val dialogimageview: CircleImageView = mDialogView.findViewById(R.id.profile_dialog)
-            dialogimageview.load(user!!.getprofile())
+            dialogimageview.load(user.getprofile())
 
             mDialogView.findViewById<Button>(R.id.perfil_dialog_show).setOnClickListener {
                 val intent = Intent(mContext, VisitProfileActivity::class.java)
                 intent.putExtra("reciever_id", user.getUid())
+                intent.putExtra("resultAUTH", "true")
                 mContext.startActivity(intent)
                 mAlertDialog.dismiss()
             }
@@ -95,17 +94,17 @@ class UserAdapter(mContext: Context, mUserList: List<Users>, isChatCheck: Boolea
                     if (snapshot.exists()){
                         for(dataSnapshot in snapshot.children){
                             val userID: Blocked? = dataSnapshot.getValue(Blocked::class.java)
-                            if(userID!!.getuserID() == user.getUid().toString()){
+                            if(userID!!.getuserID() == user.getUid()){
                                 controllerBlock = 1
                             }
                         }
                         if(controllerBlock == 0){
-                            mDialogView.findViewById<Button>(R.id.chat_block).setText(mContext.getString(R.string.block))
+                            mDialogView.findViewById<Button>(R.id.chat_block).text = mContext.getString(R.string.block)
                         }else{
-                            mDialogView.findViewById<Button>(R.id.chat_block).setText(mContext.getString(R.string.unblock))
+                            mDialogView.findViewById<Button>(R.id.chat_block).text = mContext.getString(R.string.unblock)
                         }
                     }else{
-                        mDialogView.findViewById<Button>(R.id.chat_block).setText(mContext.getString(R.string.block))
+                        mDialogView.findViewById<Button>(R.id.chat_block).text = mContext.getString(R.string.block)
                     }
                 }
 
@@ -115,7 +114,7 @@ class UserAdapter(mContext: Context, mUserList: List<Users>, isChatCheck: Boolea
 
             })
             mDialogView.findViewById<Button>(R.id.chat_block).setOnClickListener {
-                blockUser(user.getUid().toString(), user.getusername().toString())
+                blockUser(user.getUid(), user.getusername())
                 mAlertDialog.dismiss()
             }
             mDialogView.findViewById<Button>(R.id.chat_dialog_show).setOnClickListener {
@@ -134,7 +133,7 @@ class UserAdapter(mContext: Context, mUserList: List<Users>, isChatCheck: Boolea
         }else{
           holder.txt_lastMessage.visibility = View.GONE
         }
-        if(user.getstatus().equals(mContext.getString(R.string.online))){
+        if(user.getstatus() == mContext.getString(R.string.online)){
             holder.image_online.visibility = View.VISIBLE
             holder.image_offline.visibility = View.GONE
         }else{
@@ -153,7 +152,8 @@ class UserAdapter(mContext: Context, mUserList: List<Users>, isChatCheck: Boolea
                     for(dataSnapshot in snapshot.children){
                         val userID: Blocked? = dataSnapshot.getValue(Blocked::class.java)
                         if(userID!!.getuserID() == usertoblock){
-                            FirebaseDatabase.getInstance().reference.child("BlockedUsers").child(firebaseUser!!.uid).child(userID.getuid().toString()).removeValue()
+                            FirebaseDatabase.getInstance().reference.child("BlockedUsers").child(
+                                firebaseUser.uid).child(userID.getuid().toString()).removeValue()
                             controllerBlock = 1
                             Toast.makeText(mContext, mContext.getString(R.string.unblockeduser) + username, Toast.LENGTH_LONG).show()
                         }
@@ -164,7 +164,8 @@ class UserAdapter(mContext: Context, mUserList: List<Users>, isChatCheck: Boolea
                         userHashMap["uid"] = idBlock
                         userHashMap["userID"] = usertoblock
                         userHashMap["conditionBlock"] = "true"
-                        FirebaseDatabase.getInstance().reference.child("BlockedUsers").child(firebaseUser!!.uid).child(idBlock).updateChildren(userHashMap)
+                        FirebaseDatabase.getInstance().reference.child("BlockedUsers").child(
+                            firebaseUser.uid).child(idBlock).updateChildren(userHashMap)
                         Toast.makeText(mContext, mContext.getString(R.string.blockeduser) + username, Toast.LENGTH_LONG).show()
                     }
                 }else{
@@ -173,7 +174,8 @@ class UserAdapter(mContext: Context, mUserList: List<Users>, isChatCheck: Boolea
                     userHashMap["uid"] = idBlock
                     userHashMap["userID"] = usertoblock
                     userHashMap["conditionBlock"] = "true"
-                    FirebaseDatabase.getInstance().reference.child("BlockedUsers").child(firebaseUser!!.uid).child(idBlock).updateChildren(userHashMap)
+                    FirebaseDatabase.getInstance().reference.child("BlockedUsers").child(
+                        firebaseUser.uid).child(idBlock).updateChildren(userHashMap)
                     Toast.makeText(mContext, mContext.getString(R.string.blockeduser) + username, Toast.LENGTH_LONG).show()
                 }
             }
@@ -194,8 +196,8 @@ class UserAdapter(mContext: Context, mUserList: List<Users>, isChatCheck: Boolea
                 for(dataSnapshot in snapshot.children){
                     var chat: Chat? = dataSnapshot.getValue(Chat::class.java)
                     if(firebaseUser != null && chat != null){
-                        if(chat.getreciever() == firebaseUser!!.uid && chat.getsender() == uid || chat.getreciever() == uid && chat.getsender() == firebaseUser!!.uid){
-                            if(chat.getsender().equals(firebaseUser!!.uid)){
+                        if(chat.getreciever() == firebaseUser.uid && chat.getsender() == uid || chat.getreciever() == uid && chat.getsender() == firebaseUser.uid){
+                            if(chat.getsender().equals(firebaseUser.uid)){
                                 chat = decryptMessage(chat, 0)
                                 chat.setmessage(mContext.getString(R.string.me) + chat.getmessage())
                             }else{

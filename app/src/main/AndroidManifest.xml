@@ -16,7 +16,7 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.RSAChat">
-        <activity android:name=".AutenticationActivity"></activity>
+        <activity android:name=".AutenticationActivity"/>
         <activity android:name=".VisitProfileActivity" />
         <activity android:name=".ViewFullImageActivity" />
         <activity android:name=".MessageChatActivity" />
@@ -38,7 +38,7 @@
         <service
             android:name=".notifications.MyFirebaseMessagingService"
             android:enabled="true"
-            android:exported="true">
+            android:exported="false">
             <intent-filter>
                 <action android:name="com.google.firebase.MESSAGING_EVENT" />
             </intent-filter>
@@ -46,7 +46,7 @@
         <service
             android:name=".notifications.MyFirebaseInstanceIdService"
             android:enabled="true"
-            android:exported="true">
+            android:exported="false">
             <intent-filter>
                 <action android:name="com.google.firebase.INSTANCE_ID_EVENT" />
             </intent-filter>

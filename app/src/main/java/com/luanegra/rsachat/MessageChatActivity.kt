@@ -3,9 +3,11 @@ package com.luanegra.rsachat
 import android.app.ProgressDialog
 import android.content.Context
 import android.content.Intent
+import android.graphics.Bitmap
 import android.net.Uri
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.provider.MediaStore
 import android.widget.*
 import androidx.appcompat.widget.Toolbar
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -30,6 +32,7 @@ import com.luanegra.rsachat.notifications.*
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
+import java.io.ByteArrayOutputStream
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 
@@ -40,7 +43,7 @@ class MessageChatActivity : AppCompatActivity() {
     var chatsAdapter: ChatAdapter? = null
     var mChatList: List<Chat>? = null
     lateinit var recycler_messagechat: RecyclerView
-    var userRecieverRef: DatabaseReference? = null
+    private var userRecieverRef: DatabaseReference? = null
     var notify = false
     var apiService: APIService? = null
     var publicKeyVisit: String = ""
@@ -60,6 +63,7 @@ class MessageChatActivity : AppCompatActivity() {
         toolbar.setNavigationOnClickListener {
             val intent = Intent(this, MainActivity::class.java)
             intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK)
+            intent.putExtra("resultAUTH", "true")
             startActivity(intent)
             finish()
         }
@@ -117,14 +121,14 @@ class MessageChatActivity : AppCompatActivity() {
             override fun onDataChange(snapshot: DataSnapshot) {
             val user: Users? = snapshot.getValue(Users::class.java)
                 reciever_profileImage.load(user!!.getprofile())
-                recieverProfileImage = user!!.getprofile()
+                recieverProfileImage = user.getprofile()
                 reciever_UserName.text = user.getusername()
-                recieverName = user.getusername().toString()
+                recieverName = user.getusername()
                 showNotificationUser = user.getnotificationsShow()
                 send_messagechat.setOnClickListener{
-                    if(!write_messagechat.text.toString().equals("")){
+                    if(write_messagechat.text.toString() != ""){
                         notify = true
-                        publicKeyVisit = user.getpublicKey().toString()
+                        publicKeyVisit = user.getpublicKey()
                         sendMessage(firebaseUser!!.uid, userIdVisit, write_messagechat.text.toString(), publicKeyVisit)
                         write_messagechat.setText("")
                     }else{
@@ -148,7 +152,7 @@ class MessageChatActivity : AppCompatActivity() {
             override fun onDataChange(snapshot: DataSnapshot) {
                 (mChatList as ArrayList<Chat>).clear()
                 for(valor in snapshot.children){
-                    var chat = valor.getValue(Chat::class.java)
+                    val chat = valor.getValue(Chat::class.java)
                     if(chat!!.getreciever().equals(receiverID) && chat.getsender().equals(senderId) || chat.getreciever().equals(senderId) && chat.getsender().equals(receiverID)){
                             (mChatList as ArrayList<Chat>).add(chat)
                     }
@@ -172,7 +176,7 @@ class MessageChatActivity : AppCompatActivity() {
         val current = LocalDateTime.now()
         val formatter = DateTimeFormatter.ofPattern("MMM dd, yyyy HH:mm")
         val formatted = current.format(formatter)
-        var messageHashMap = HashMap<String, Any?>()
+        val messageHashMap = HashMap<String, Any?>()
         messageHashMap["sender"] = senderId
         messageHashMap["reciever"] = recieverId
         messageHashMap["timeStamp"] =formatted
@@ -231,7 +235,8 @@ class MessageChatActivity : AppCompatActivity() {
                 override fun onDataChange(snapshot: DataSnapshot) {
                     for(dataSnapshot in snapshot.children){
                         val token: Token? = dataSnapshot.getValue(Token::class.java)
-                        val data  = Data(firebaseUser!!.uid, R.mipmap.ic_launcher, "$message", "New message from $getusername", userIdVisit)
+                        val data  = Data(firebaseUser!!.uid, R.mipmap.ic_launcher,
+                            message, "New message from $getusername", userIdVisit)
                         val sender = Sender(data, token!!.getToken().toString())
                         apiService!!.sendNotification(sender).enqueue(object: Callback<MyResponse>{
                             override fun onResponse(
@@ -243,7 +248,6 @@ class MessageChatActivity : AppCompatActivity() {
                                         Toast.makeText(this@MessageChatActivity, getString(R.string.failednothinghappened), Toast.LENGTH_LONG).show()
                                     }
                                 }
-
                             }
 
                             override fun onFailure(call: Call<MyResponse>, t: Throwable) {
@@ -275,60 +279,71 @@ class MessageChatActivity : AppCompatActivity() {
             val ref = FirebaseDatabase.getInstance().reference
             val messageId = ref.push().key
             val filePath = storageRef.child("$messageId.jpg")
-            var uploadTask: StorageTask<*>
-            uploadTask = filePath.putFile(fileUri!!)
-            uploadTask.continueWithTask(Continuation <UploadTask.TaskSnapshot, Task<Uri>>{ task ->
-                if(task.isSuccessful){
-                    task.exception?.let {
-                        throw it
-                    }
-                }
-                return@Continuation filePath.downloadUrl
-            }).addOnCompleteListener { task ->
-                if(task.isSuccessful){
-                    val downloadUrl = task.result
-                    val current = LocalDateTime.now()
-                    val formatter = DateTimeFormatter.ofPattern("MMM dd, yyyy HH:mm")
-                    val formatted = current.format(formatter)
-                    var messageHashMap = HashMap<String, Any?>()
-                    messageHashMap["sender"] = firebaseUser!!.uid
-                    messageHashMap["reciever"] = userIdVisit
-                    messageHashMap["timeStamp"] = formatted
-                    messageHashMap["isseen"] = false
-                    messageHashMap["messageId"] = messageId
-                    messageHashMap["url"] = downloadUrl.toString()
-                    val textEnc: String = encryptMessage(getString(R.string.sentyouanimage), publicKeyVisit)
-                    messageHashMap["message"] = textEnc
-                    val sharedPreference =  getSharedPreferences("RSA_CHAT", Context.MODE_PRIVATE)
-                    val editor = sharedPreference.edit()
-                    editor.putString(messageId, "sent you an image.")
-                    editor.apply()
-                    ref.child("Chats").child(messageId!!).setValue(messageHashMap).addOnCompleteListener { task1 ->
-                        if(task1.isSuccessful){
-                            val usersRef = FirebaseDatabase.getInstance().reference.child("users").child(firebaseUser!!.uid)
-                            usersRef.addValueEventListener(object: ValueEventListener {
-                                override fun onDataChange(snapshot: DataSnapshot) {
-                                    val user = snapshot.getValue(Users::class.java)
-                                    if(notify){
-                                        sendNotification(userIdVisit, user!!.getusername(), getString(R.string.sentyouanimage))
-                                    }
-                                    notify = false
-                                }
-
-                                override fun onCancelled(error: DatabaseError) {
-
-                                }
-
-                            })
+            val fileRef = filePath!!.child(
+                System.currentTimeMillis().toString() + ".jpg"
+            )
+            val bmp = MediaStore.Images.Media.getBitmap(
+                getContentResolver(),
+                fileUri
+            )
+            if(bmp.allocationByteCount < 30000000){
+                val baos = ByteArrayOutputStream()
+                bmp.compress(Bitmap.CompressFormat.JPEG, 25, baos)
+                val data = baos.toByteArray()
+                val uploadTask2: UploadTask = fileRef.putBytes(data)
+                uploadTask2.continueWithTask(Continuation<UploadTask.TaskSnapshot, Task<Uri>> { task ->
+                    if (task.isSuccessful) {
+                        task.exception?.let {
+                            throw it
                         }
                     }
-                    loadingBar.dismiss()
+                    return@Continuation fileRef.downloadUrl
+                }).addOnCompleteListener { task ->
+                    if(task.isSuccessful){
+                        val downloadUrl = task.result
+                        val current = LocalDateTime.now()
+                        val formatter = DateTimeFormatter.ofPattern("MMM dd, yyyy HH:mm")
+                        val formatted = current.format(formatter)
+                        val messageHashMap = HashMap<String, Any?>()
+                        messageHashMap["sender"] = firebaseUser!!.uid
+                        messageHashMap["reciever"] = userIdVisit
+                        messageHashMap["timeStamp"] = formatted
+                        messageHashMap["isseen"] = false
+                        messageHashMap["messageId"] = messageId
+                        messageHashMap["url"] = downloadUrl.toString()
+                        val textEnc: String = encryptMessage(getString(R.string.sentyouanimage), publicKeyVisit)
+                        messageHashMap["message"] = textEnc
+                        val sharedPreference =  getSharedPreferences("RSA_CHAT", Context.MODE_PRIVATE)
+                        val editor = sharedPreference.edit()
+                        editor.putString(messageId, "sent you an image.")
+                        editor.apply()
+                        ref.child("Chats").child(messageId!!).setValue(messageHashMap).addOnCompleteListener { task1 ->
+                            if(task1.isSuccessful){
+                                val usersRef = FirebaseDatabase.getInstance().reference.child("users").child(firebaseUser!!.uid)
+                                usersRef.addValueEventListener(object: ValueEventListener {
+                                    override fun onDataChange(snapshot: DataSnapshot) {
+                                        val user = snapshot.getValue(Users::class.java)
+                                        if(notify){
+                                            sendNotification(userIdVisit, user!!.getusername(), getString(R.string.sentyouanimage))
+                                        }
+                                        notify = false
+                                    }
+
+                                    override fun onCancelled(error: DatabaseError) {
+
+                                    }
+
+                                })
+                            }
+                        }
+                        loadingBar.dismiss()
+                    }
                 }
             }
         }
     }
 
-    var seenListener: ValueEventListener? = null
+    private var seenListener: ValueEventListener? = null
     private fun seenMessage (userID: String){
         val chatsRef = FirebaseDatabase.getInstance().reference.child("Chats")
         seenListener = chatsRef.addValueEventListener(object : ValueEventListener {
@@ -346,7 +361,6 @@ class MessageChatActivity : AppCompatActivity() {
             override fun onCancelled(error: DatabaseError) {
 
             }
-
         })
     }
 
@@ -356,7 +370,7 @@ class MessageChatActivity : AppCompatActivity() {
         updateStatus("offline")
     }
 
-    fun encryptMessage(message: String, publicKey: String): String{
+    private fun encryptMessage(message: String, publicKey: String): String{
         val encryptedString = EncryptGenerator.generateEncrypt(plainText = message, publicKey = publicKey, jWEAlgorithm = "RSA-OAEP-256", encryptionMethod = "A256CBC-HS512")
         return encryptedString.toString()
     }
@@ -385,4 +399,12 @@ class MessageChatActivity : AppCompatActivity() {
         }
     }
 
+    override fun onBackPressed() {
+        super.onBackPressed()
+        val intent = Intent(this, MainActivity::class.java)
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK)
+        intent.putExtra("resultAUTH", "true")
+        startActivity(intent)
+        finish()
+    }
 }

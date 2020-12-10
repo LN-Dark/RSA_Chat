@@ -8,7 +8,7 @@ class Token {
         this.token = token
     }
 
-    fun getToken(): String?{
+    fun getToken(): String{
         return token
     }
 

@@ -1,47 +1,43 @@
 package com.luanegra.rsachat
 
-import android.content.Context
 import android.content.Intent
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.util.Log
 import android.view.View
 import android.widget.Button
 import android.widget.Toast
-import androidx.biometric.BiometricPrompt
-import androidx.core.content.ContextCompat
+import androidx.appcompat.app.AppCompatActivity
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
-import com.google.android.gms.common.Scopes
 import com.google.android.gms.common.SignInButton
 import com.google.android.gms.common.api.ApiException
-import com.google.android.gms.common.api.Scope
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.auth.GoogleAuthProvider
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
 import com.luanegra.rsachat.RSA.GenerateKeys
-import java.util.concurrent.Executor
+import java.util.*
+import kotlin.collections.ArrayList
+import kotlin.collections.HashMap
 
 class WelcomeActivity : AppCompatActivity() {
 
     var firebaseUser: FirebaseUser? = null
-    var btn_register: Button? = null
-    var btn_login: Button? = null
+    private var btn_register: Button? = null
+    private var btn_login: Button? = null
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_welcome)
-        btn_register = findViewById<Button>(R.id.btn_register_welcome)
+        btn_register = findViewById(R.id.btn_register_welcome)
         btn_register!!.setOnClickListener{
             val intent = Intent(this@WelcomeActivity, RegisterActivity::class.java)
             startActivity(intent)
             finish()
         }
 
-        btn_login = findViewById<Button>(R.id.btn_login_welcome)
+        btn_login = findViewById(R.id.btn_login_welcome)
         btn_login!!.setOnClickListener{
             val intent = Intent(this@WelcomeActivity, LogInActivity::class.java)
             startActivity(intent)
@@ -125,7 +121,7 @@ class WelcomeActivity : AppCompatActivity() {
                 userHashMap["profile"] = account.photoUrl.toString()
                 userHashMap["cover"] = "https://firebasestorage.googleapis.com/v0/b/rsachat-73eff.appspot.com/o/coverdefault.jpg?alt=media&token=30312c5f-a8a2-4ed6-91ed-470d89c3a7bc"
                 userHashMap["status"] = "offline"
-                userHashMap["search"] = account.displayName.toString().toLowerCase()
+                userHashMap["search"] = account.displayName.toString().toLowerCase(Locale.ROOT)
                 userHashMap["facebook"] = "https://m.facebook.com"
                 userHashMap["instagram"] = "https://m.instagram.com"
                 userHashMap["website"] = "https://www.google.pt"
@@ -134,11 +130,11 @@ class WelcomeActivity : AppCompatActivity() {
                 var listKeys: List<String>?
                 listKeys = ArrayList()
                 listKeys = gerarChaves.generateKeys()
-                userHashMap["publicKey"] = listKeys.get(0)
-                val sharedPreference =  getSharedPreferences("RSA_CHAT", Context.MODE_PRIVATE)
+                userHashMap["publicKey"] = listKeys[0]
+                val sharedPreference =  getSharedPreferences("RSA_CHAT", MODE_PRIVATE)
                 val editor = sharedPreference.edit()
-                editor.putString("privateKey",listKeys.get(1))
-                editor.putString("publicKey",listKeys.get(0))
+                editor.putString("privateKey", listKeys[1])
+                editor.putString("publicKey", listKeys[0])
                 editor.apply()
                 refUsers.updateChildren(userHashMap).addOnCompleteListener { task ->
                     if(task.isSuccessful){

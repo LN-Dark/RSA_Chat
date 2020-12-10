@@ -9,7 +9,7 @@ class ChatList {
         this.id = id
     }
 
-    fun getid(): String?{
+    fun getid(): String{
         return id
     }
 

@@ -7,19 +7,17 @@ import android.content.Context
 import android.content.Intent
 import android.media.RingtoneManager
 import android.os.Build
-import android.os.Bundle
 import androidx.core.app.NotificationCompat
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
+import com.google.firebase.iid.FirebaseInstanceId
 import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.messaging.RemoteMessage
 import com.luanegra.rsachat.AutenticationActivity
-import com.luanegra.rsachat.MessageChatActivity
 import com.luanegra.rsachat.RSA.DecryptGenerator
-import com.luanegra.rsachat.modelclasses.Chat
 import com.luanegra.rsachat.modelclasses.Users
 
 class MyFirebaseMessagingService : FirebaseMessagingService() {
@@ -129,5 +127,22 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
 
         })
 
+    }
+
+    override fun onNewToken(p0: String) {
+        super.onNewToken(p0)
+        val firebaseUser = FirebaseAuth.getInstance().currentUser
+        val refreshToken = FirebaseInstanceId.getInstance().token
+
+        if(firebaseUser != null){
+            updateToken(refreshToken)
+        }
+    }
+
+    private fun updateToken(refreshToken: String?) {
+        val firebaseUser = FirebaseAuth.getInstance().currentUser
+        val ref = FirebaseDatabase.getInstance().reference.child("Tokens")
+        val token = Token(refreshToken!!)
+        ref.child(firebaseUser!!.uid).setValue(token)
     }
 }

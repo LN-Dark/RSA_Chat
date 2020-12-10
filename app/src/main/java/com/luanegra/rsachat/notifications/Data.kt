@@ -16,7 +16,7 @@ class Data {
         this.sented = sented
     }
 
-    fun getUser(): String?{
+    fun getUser(): String{
         return user
     }
 
@@ -32,7 +32,7 @@ class Data {
         this.icon = icon
     }
 
-    fun getBody(): String?{
+    fun getBody(): String{
         return body
     }
 
@@ -40,7 +40,7 @@ class Data {
         this.body = body
     }
 
-    fun getTitle(): String?{
+    fun getTitle(): String{
         return title
     }
 
@@ -48,7 +48,7 @@ class Data {
         this.title = title
     }
 
-    fun getSented(): String?{
+    fun getSented(): String{
         return sented
     }
 

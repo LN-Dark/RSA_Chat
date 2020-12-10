@@ -1,14 +1,12 @@
 package com.luanegra.rsachat.RSA
 
 import android.util.Base64
-import java.security.*
-import java.util.*
-import kotlin.collections.ArrayList
+import java.security.KeyPairGenerator
 
 class GenerateKeys {
 
     fun generateKeys(): List<String> {
-        var keys = ArrayList<String>()
+        val keys = ArrayList<String>()
         val kpg = KeyPairGenerator.getInstance("RSA")
         kpg.initialize(2048)
         val kp = kpg.generateKeyPair()

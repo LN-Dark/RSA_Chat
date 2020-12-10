@@ -9,7 +9,7 @@
     <string name="rsa_chat">Black Moon RSA Chat</string>
     <string name="logout">LogOut</string>
     <string name="procurar">Search</string>
-    <string name="write_message">Write message...</string>
+    <string name="write_message">Write message…</string>
     <string name="send_message">Send Message</string>
     <string name="profile">Profile</string>
     <string name="chat">Chat</string>
@@ -58,4 +58,5 @@
     <string name="fingerprintlogin">Unlock</string>
     <string name="loginusingfingerprint">Unlock using device security</string>
     <string name="authenticationrequired">Authentication required</string>
+    <string name="notifications">Notifications</string>
 </resources>

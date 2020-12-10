@@ -23,7 +23,7 @@
     <string name="online">online</string>
     <string name="me">eu:&#160;&#160;"</string>
     <string name="sentyouanimage">sent you an image.</string>
-    <string name="userwillnotbesaved">O nome de utilizador nao vai ser gravado porque está em branco.</string>
+    <string name="userwillnotbesaved">O nome de utilizador não vai ser gravado porque está em branco.</string>
     <string name="writeusername">Escreve o nome de utilizador:</string>
     <string name="writeurl">Escreve a Url:</string>
     <string name="create">Criar</string>
@@ -58,4 +58,5 @@
     <string name="fingerprintlogin">Desbloquear</string>
     <string name="loginusingfingerprint">Desbloqueia usando a segurança do Smartphone</string>
     <string name="authenticationrequired">Autenticação obrigatória</string>
+    <string name="notifications">Notificações</string>
 </resources>

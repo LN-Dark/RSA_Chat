@@ -33,49 +33,49 @@ class Chat {
 
     constructor()
 
-    fun getMessageid(): String?{
+    fun getMessageid(): String{
         return messageId
     }
 
     fun setMessageid(messageId: String){
         this.messageId = messageId
     }
-    fun getsender(): String?{
+    fun getsender(): String{
         return sender
     }
 
     fun setsender(sender: String){
         this.sender = sender
     }
-    fun getreciever(): String?{
+    fun getreciever(): String{
         return reciever
     }
 
     fun setreciever(reciever: String){
         this.reciever = reciever
     }
-    fun getmessage(): String?{
+    fun getmessage(): String{
         return message
     }
 
     fun setmessage(message: String){
         this.message = message
     }
-    fun gettimeStamp(): String?{
+    fun gettimeStamp(): String{
         return timeStamp
     }
 
     fun settimeStamp(timeStamp: String){
         this.timeStamp = timeStamp
     }
-    fun getisseen(): Boolean?{
+    fun getisseen(): Boolean{
         return isseen
     }
 
     fun setisseen(isseen: Boolean){
         this.isseen = isseen
     }
-    fun geturl(): String?{
+    fun geturl(): String{
         return url
     }
 

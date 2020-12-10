@@ -52,6 +52,18 @@ class ViewFullImageActivity : AppCompatActivity() {
     override fun onResume() {
         super.onResume()
         updateStatus("online")
+        if(!intent.getStringExtra("resultAUTH").equals("true")){
+            val intent = Intent(this, AutenticationActivity::class.java)
+            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK)
+            intent.putExtra("reciever_id", reciever_id)
+            intent.putExtra("reciever_profile", reciever_profile)
+            intent.putExtra("reciever_username", reciever_username)
+            intent.putExtra("activityType", "notification")
+            startActivity(intent)
+            finish()
+        }else{
+            intent.putExtra("resultAUTH", "false")
+        }
     }
 
     override fun onPause() {
@@ -66,6 +78,7 @@ class ViewFullImageActivity : AppCompatActivity() {
         intent.putExtra("reciever_id", reciever_id)
         intent.putExtra("reciever_profile", reciever_profile)
         intent.putExtra("reciever_username", reciever_username)
+        intent.putExtra("resultAUTH", "true")
         startActivity(intent)
         finish()
     }

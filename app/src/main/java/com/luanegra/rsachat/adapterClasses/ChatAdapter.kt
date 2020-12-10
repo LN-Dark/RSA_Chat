@@ -2,7 +2,6 @@ package com.luanegra.rsachat.adapterClasses
 
 import android.annotation.SuppressLint
 import android.content.Context
-import android.content.DialogInterface
 import android.content.Intent
 import android.view.LayoutInflater
 import android.view.View
@@ -25,26 +24,24 @@ import com.luanegra.rsachat.modelclasses.Chat
 import com.luanegra.rsachat.modelclasses.Users
 
 class ChatAdapter(mContext: Context?, mChatList: List<Chat>, imageurl: String) : RecyclerView.Adapter<ChatAdapter.ViewHolder?>() {
-    private val mContext: Context?
+    private val mContext: Context? = mContext!!
     private val mChatList: List<Chat>
     private var imageurl: String
     val firebaseUser = FirebaseAuth.getInstance().currentUser!!
 
     init {
-        this.mContext = mContext!!
         this.mChatList = mChatList
         this.imageurl = imageurl
     }
 
     inner class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
 
-        var profileimagemessage: de.hdodenhof.circleimageview.CircleImageView
+        var profileimagemessage: de.hdodenhof.circleimageview.CircleImageView = itemView.findViewById(R.id.profile_image_message)
         var message_chat: TextView
         var image_view: ImageView
         var text_seen: TextView
 
         init {
-            profileimagemessage = itemView.findViewById(R.id.profile_image_message)
             message_chat = itemView.findViewById(R.id.message_chat)
             image_view = itemView.findViewById(R.id.image_view)
             text_seen = itemView.findViewById(R.id.text_seen)

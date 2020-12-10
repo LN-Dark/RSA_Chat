@@ -13,7 +13,7 @@ class Blocked {
         this.uid = uid
     }
 
-    fun getuserID(): String?{
+    fun getuserID(): String {
         return userID
     }
 
@@ -21,7 +21,7 @@ class Blocked {
         this.userID = userID
     }
 
-    fun getconditionBlock(): String?{
+    fun getconditionBlock(): String{
         return conditionBlock
     }
 
@@ -29,7 +29,7 @@ class Blocked {
         this.conditionBlock = conditionBlock
     }
 
-    fun getuid(): String?{
+    fun getuid(): String{
         return uid
     }
 
