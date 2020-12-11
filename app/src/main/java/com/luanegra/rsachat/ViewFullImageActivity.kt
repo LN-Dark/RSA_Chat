@@ -15,6 +15,7 @@ class ViewFullImageActivity : AppCompatActivity() {
     private var reciever_id: String = ""
     private var reciever_profile: String = ""
     private var reciever_username: String = ""
+    private var publicKeyVisit: String = ""
     var firebaseUser: FirebaseUser?= null
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -25,6 +26,7 @@ class ViewFullImageActivity : AppCompatActivity() {
         reciever_id = intent.getStringExtra("reciever_id").toString()
         reciever_profile = intent.getStringExtra("reciever_profile").toString()
         reciever_username = intent.getStringExtra("reciever_username").toString()
+        publicKeyVisit = intent.getStringExtra("publicKeyVisit").toString()
         firebaseUser = FirebaseAuth.getInstance().currentUser
         val toolbar: androidx.appcompat.widget.Toolbar = findViewById(R.id.toolbar_viewfullimage)
         setSupportActionBar(toolbar)
@@ -36,6 +38,7 @@ class ViewFullImageActivity : AppCompatActivity() {
             intent.putExtra("reciever_id", reciever_id)
             intent.putExtra("reciever_profile", reciever_profile)
             intent.putExtra("reciever_username", reciever_username)
+            intent.putExtra("publicKeyVisit", publicKeyVisit)
             startActivity(intent)
             finish()
         }
@@ -59,6 +62,7 @@ class ViewFullImageActivity : AppCompatActivity() {
             intent.putExtra("reciever_profile", reciever_profile)
             intent.putExtra("reciever_username", reciever_username)
             intent.putExtra("activityType", "notification")
+            intent.putExtra("publicKeyVisit", publicKeyVisit)
             startActivity(intent)
             finish()
         }else{
@@ -78,6 +82,7 @@ class ViewFullImageActivity : AppCompatActivity() {
         intent.putExtra("reciever_id", reciever_id)
         intent.putExtra("reciever_profile", reciever_profile)
         intent.putExtra("reciever_username", reciever_username)
+        intent.putExtra("publicKeyVisit", publicKeyVisit)
         intent.putExtra("resultAUTH", "true")
         startActivity(intent)
         finish()

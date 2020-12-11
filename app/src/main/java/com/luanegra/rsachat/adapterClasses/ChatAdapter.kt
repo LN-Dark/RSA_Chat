@@ -89,7 +89,7 @@ class ChatAdapter(mContext: Context?, mChatList: List<Chat>, imageurl: String) :
                             intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK)
                             val userRef =
                                 FirebaseDatabase.getInstance().reference.child("users").child(
-                                    chat.getreciever().toString()
+                                    chat.getreciever()
                                 )
                             userRef.addValueEventListener(object : ValueEventListener {
                                 override fun onDataChange(snapshot: DataSnapshot) {
@@ -98,6 +98,7 @@ class ChatAdapter(mContext: Context?, mChatList: List<Chat>, imageurl: String) :
                                     intent.putExtra("reciever_id", chat.getreciever())
                                     intent.putExtra("reciever_profile", user!!.getprofile())
                                     intent.putExtra("reciever_username", user.getusername())
+                                    intent.putExtra("publicKeyVisit", user.getpublicKey())
                                     mContext.startActivity(intent)
                                 }
 

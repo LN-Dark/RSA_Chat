@@ -40,7 +40,7 @@
     <string name="selectimage">Seleciona a imagem</string>
     <string name="cantsendemptymessages">Não se pode enviar mensagens em branco.</string>
     <string name="failednothinghappened">Erro, não acontece nada.</string>
-    <string name="yourgoogleplay">O teu Google Play Store deixa fazer sign in, por favor utilizado o outro método de Registar/LogIn</string>
+    <string name="yourgoogleplay">O teu Google Play Store não deixa fazer sign in, por favor utilizado o outro método de Registar/LogIn</string>
     <string name="imagefrom">Imagem de&#160;"</string>
     <string name="viewfullimage">Abrir imagem</string>
     <string name="deletemessage">Apagar mensagem</string>

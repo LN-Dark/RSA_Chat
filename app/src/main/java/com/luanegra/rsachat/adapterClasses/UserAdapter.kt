@@ -82,6 +82,7 @@ class UserAdapter(mContext: Context, mUserList: List<Users>, isChatCheck: Boolea
             mDialogView.findViewById<Button>(R.id.perfil_dialog_show).setOnClickListener {
                 val intent = Intent(mContext, VisitProfileActivity::class.java)
                 intent.putExtra("reciever_id", user.getUid())
+
                 intent.putExtra("resultAUTH", "true")
                 mContext.startActivity(intent)
                 mAlertDialog.dismiss()
@@ -122,6 +123,7 @@ class UserAdapter(mContext: Context, mUserList: List<Users>, isChatCheck: Boolea
                 intent.putExtra("reciever_id", user.getUid())
                 intent.putExtra("reciever_profile", user.getprofile())
                 intent.putExtra("reciever_username", user.getusername())
+                intent.putExtra("publicKeyVisit", user.getpublicKey())
                 intent.putExtra("resultAUTH", "true")
                 mContext.startActivity(intent)
                 mAlertDialog.dismiss()

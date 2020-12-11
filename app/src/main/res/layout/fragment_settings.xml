@@ -25,6 +25,8 @@
              android:layout_width="match_parent"
              android:layout_height="200dp"
              android:scaleType="centerCrop"
+             android:outlineProvider="bounds"
+             android:elevation="2dp"
              android:fadingEdgeLength="10dp"
              android:src="@drawable/coverdefault" />
 
@@ -33,6 +35,8 @@
              android:layout_width="150dp"
              android:layout_height="150dp"
              android:layout_centerHorizontal="true"
+             android:outlineProvider="bounds"
+             android:elevation="2dp"
              android:layout_marginTop="140dp"
              android:scaleType="centerCrop"
              android:src="@drawable/profile_1" />
@@ -90,9 +94,12 @@
        android:layout_width="match_parent"
        android:layout_height="0dp"
        android:checked="true"
-       android:textColor="@color/colorProfile"
        android:text="@string/notifications"
-       app:layout_constraintBottom_toTopOf="@+id/linearLayout"
+       android:layout_marginStart="20dp"
+       android:layout_marginEnd="20dp"
+       android:textColor="@color/colorProfile"
+       app:layout_constraintEnd_toEndOf="parent"
+       app:layout_constraintStart_toStartOf="parent"
        app:layout_constraintTop_toBottomOf="@+id/card_1" />
 
    <LinearLayout
@@ -104,7 +111,8 @@
        android:gravity="center"
        android:orientation="horizontal"
        android:padding="6dp"
-       app:layout_constraintBottom_toBottomOf="parent">
+       app:layout_constraintBottom_toBottomOf="parent"
+       app:layout_constraintTop_toBottomOf="@+id/check_notifications_settings">
 
       <ImageView
           android:id="@+id/facebook_settings"

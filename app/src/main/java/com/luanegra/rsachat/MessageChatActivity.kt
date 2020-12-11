@@ -10,6 +10,7 @@ import android.os.Bundle
 import android.provider.MediaStore
 import android.widget.*
 import androidx.appcompat.widget.Toolbar
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import coil.load
@@ -29,6 +30,14 @@ import com.luanegra.rsachat.modelclasses.Blocked
 import com.luanegra.rsachat.modelclasses.Chat
 import com.luanegra.rsachat.modelclasses.Users
 import com.luanegra.rsachat.notifications.*
+import id.zelory.compressor.Compressor
+import id.zelory.compressor.constraint.format
+import id.zelory.compressor.constraint.quality
+import kotlinx.coroutines.launch
+import pl.aprilapps.easyphotopicker.DefaultCallback
+import pl.aprilapps.easyphotopicker.EasyImage
+import pl.aprilapps.easyphotopicker.MediaFile
+import pl.aprilapps.easyphotopicker.MediaSource
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -71,6 +80,7 @@ class MessageChatActivity : AppCompatActivity() {
 
         intent = intent
         userIdVisit = intent.getStringExtra("reciever_id").toString()
+        publicKeyVisit = intent.getStringExtra("publicKeyVisit").toString()
         firebaseUser = FirebaseAuth.getInstance().currentUser
 
         val write_messagechat: TextInputEditText = findViewById(R.id.write_messagechat)
@@ -110,16 +120,19 @@ class MessageChatActivity : AppCompatActivity() {
         })
 
         btn_atach_image.setOnClickListener {
-            val intent = Intent()
-            intent.action = Intent.ACTION_GET_CONTENT
-            intent.type = "image/*"
-            startActivityForResult(Intent.createChooser(intent,getString(R.string.selectimage)), 438)
+            intent.putExtra("resultAUTH", "true")
+            easyImage = EasyImage.Builder(this)
+                .setCopyImagesToPublicGalleryFolder(false)
+                .setFolderName("EasyImage sample")
+                .allowMultiple(false)
+                .build()
+            easyImage!!.openChooser(this)
         }
 
         userRecieverRef = FirebaseDatabase.getInstance().reference.child("users").child(userIdVisit)
         userRecieverRef!!.addValueEventListener(object: ValueEventListener{
             override fun onDataChange(snapshot: DataSnapshot) {
-            val user: Users? = snapshot.getValue(Users::class.java)
+                val user: Users? = snapshot.getValue(Users::class.java)
                 reciever_profileImage.load(user!!.getprofile())
                 recieverProfileImage = user.getprofile()
                 reciever_UserName.text = user.getusername()
@@ -154,7 +167,7 @@ class MessageChatActivity : AppCompatActivity() {
                 for(valor in snapshot.children){
                     val chat = valor.getValue(Chat::class.java)
                     if(chat!!.getreciever().equals(receiverID) && chat.getsender().equals(senderId) || chat.getreciever().equals(senderId) && chat.getsender().equals(receiverID)){
-                            (mChatList as ArrayList<Chat>).add(chat)
+                        (mChatList as ArrayList<Chat>).add(chat)
                     }
                     chatsAdapter = ChatAdapter(this@MessageChatActivity, (mChatList as ArrayList<Chat>), receiverImageUrl.toString())
                     recycler_messagechat.adapter = chatsAdapter
@@ -267,79 +280,90 @@ class MessageChatActivity : AppCompatActivity() {
         }
     }
 
+    var easyImage: EasyImage? = null
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
-        if(requestCode == 438 && resultCode == RESULT_OK && data != null && data.data != null){
+        if(resultCode == RESULT_OK && data != null && data.data != null){
             notify = true
             val loadingBar = ProgressDialog(this)
-            loadingBar.setMessage("Please wait...")
-            loadingBar.show()
-            val fileUri = data.data
             val storageRef = FirebaseStorage.getInstance().reference.child("Chat_Images")
             val ref = FirebaseDatabase.getInstance().reference
             val messageId = ref.push().key
             val filePath = storageRef.child("$messageId.jpg")
-            val fileRef = filePath!!.child(
+            val fileRef = filePath.child(
                 System.currentTimeMillis().toString() + ".jpg"
             )
-            val bmp = MediaStore.Images.Media.getBitmap(
-                getContentResolver(),
-                fileUri
-            )
-            if(bmp.allocationByteCount < 30000000){
-                val baos = ByteArrayOutputStream()
-                bmp.compress(Bitmap.CompressFormat.JPEG, 25, baos)
-                val data = baos.toByteArray()
-                val uploadTask2: UploadTask = fileRef.putBytes(data)
-                uploadTask2.continueWithTask(Continuation<UploadTask.TaskSnapshot, Task<Uri>> { task ->
-                    if (task.isSuccessful) {
-                        task.exception?.let {
-                            throw it
-                        }
-                    }
-                    return@Continuation fileRef.downloadUrl
-                }).addOnCompleteListener { task ->
-                    if(task.isSuccessful){
-                        val downloadUrl = task.result
-                        val current = LocalDateTime.now()
-                        val formatter = DateTimeFormatter.ofPattern("MMM dd, yyyy HH:mm")
-                        val formatted = current.format(formatter)
-                        val messageHashMap = HashMap<String, Any?>()
-                        messageHashMap["sender"] = firebaseUser!!.uid
-                        messageHashMap["reciever"] = userIdVisit
-                        messageHashMap["timeStamp"] = formatted
-                        messageHashMap["isseen"] = false
-                        messageHashMap["messageId"] = messageId
-                        messageHashMap["url"] = downloadUrl.toString()
-                        val textEnc: String = encryptMessage(getString(R.string.sentyouanimage), publicKeyVisit)
-                        messageHashMap["message"] = textEnc
-                        val sharedPreference =  getSharedPreferences("RSA_CHAT", Context.MODE_PRIVATE)
-                        val editor = sharedPreference.edit()
-                        editor.putString(messageId, "sent you an image.")
-                        editor.apply()
-                        ref.child("Chats").child(messageId!!).setValue(messageHashMap).addOnCompleteListener { task1 ->
-                            if(task1.isSuccessful){
-                                val usersRef = FirebaseDatabase.getInstance().reference.child("users").child(firebaseUser!!.uid)
-                                usersRef.addValueEventListener(object: ValueEventListener {
-                                    override fun onDataChange(snapshot: DataSnapshot) {
-                                        val user = snapshot.getValue(Users::class.java)
-                                        if(notify){
-                                            sendNotification(userIdVisit, user!!.getusername(), getString(R.string.sentyouanimage))
+            easyImage!!.handleActivityResult(
+                requestCode,
+                resultCode,
+                data,
+                this,
+                object : DefaultCallback() {
+                    override fun onMediaFilesPicked(imageFiles: Array<MediaFile>, source: MediaSource) {
+                        lifecycleScope.launch {
+                            val compressedImageFile = Compressor.compress(this@MessageChatActivity, imageFiles[0].file){
+                                quality(50)
+                                format(Bitmap.CompressFormat.JPEG)
+                            }
+                            if(compressedImageFile.length() < 30000000){
+                                loadingBar.setMessage(getString(R.string.pleasewait))
+                                loadingBar.setCancelable(false)
+                                loadingBar.show()
+                                val uploadTask2: UploadTask = fileRef.putBytes(compressedImageFile.readBytes())
+                                uploadTask2.continueWithTask(Continuation<UploadTask.TaskSnapshot, Task<Uri>> { task ->
+                                    if (task.isSuccessful) {
+                                        task.exception?.let {
+                                            throw it
                                         }
-                                        notify = false
                                     }
+                                    return@Continuation fileRef.downloadUrl
+                                }).addOnCompleteListener { task ->
+                                    if(task.isSuccessful){
+                                        val downloadUrl = task.result
+                                        val current = LocalDateTime.now()
+                                        val formatter = DateTimeFormatter.ofPattern("MMM dd, yyyy HH:mm")
+                                        val formatted = current.format(formatter)
+                                        val messageHashMap = HashMap<String, Any?>()
+                                        messageHashMap["sender"] = firebaseUser!!.uid
+                                        messageHashMap["reciever"] = userIdVisit
+                                        messageHashMap["timeStamp"] = formatted
+                                        messageHashMap["isseen"] = false
+                                        messageHashMap["messageId"] = messageId
+                                        messageHashMap["url"] = downloadUrl.toString()
+                                        val textEnc: String = encryptMessage(getString(R.string.sentyouanimage), publicKeyVisit)
+                                        messageHashMap["message"] = textEnc
+                                        val sharedPreference =  getSharedPreferences("RSA_CHAT", Context.MODE_PRIVATE)
+                                        val editor = sharedPreference.edit()
+                                        editor.putString(messageId, "sent you an image.")
+                                        editor.apply()
+                                        ref.child("Chats").child(messageId!!).setValue(messageHashMap).addOnCompleteListener { task1 ->
+                                            if(task1.isSuccessful){
+                                                val usersRef = FirebaseDatabase.getInstance().reference.child("users").child(firebaseUser!!.uid)
+                                                usersRef.addValueEventListener(object: ValueEventListener {
+                                                    override fun onDataChange(snapshot: DataSnapshot) {
+                                                        val user = snapshot.getValue(Users::class.java)
+                                                        if(notify){
+                                                            sendNotification(userIdVisit, user!!.getusername(), getString(R.string.sentyouanimage))
+                                                        }
+                                                        notify = false
+                                                    }
 
-                                    override fun onCancelled(error: DatabaseError) {
+                                                    override fun onCancelled(error: DatabaseError) {
 
+                                                    }
+
+                                                })
+                                            }
+                                        }
+                                        loadingBar.dismiss()
                                     }
-
-                                })
+                                }
+                            }else{
+                                Toast.makeText(this@MessageChatActivity, getString(R.string.imagetoobig), Toast.LENGTH_LONG).show()
                             }
                         }
-                        loadingBar.dismiss()
                     }
-                }
-            }
+                })
         }
     }
 

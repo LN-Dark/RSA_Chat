@@ -1,12 +1,11 @@
 package com.luanegra.rsachat.fragments
 
+import android.R.attr
 import android.app.Activity
 import android.app.ProgressDialog
 import android.content.Intent
 import android.graphics.Bitmap
 import android.net.Uri
-import android.os.Build.VERSION
-import android.os.Build.VERSION_CODES
 import android.os.Bundle
 import android.provider.MediaStore
 import android.text.Editable
@@ -19,6 +18,7 @@ import android.widget.ImageView
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.lifecycleScope
 import coil.load
 import com.google.android.gms.tasks.Continuation
 import com.google.android.gms.tasks.Task
@@ -29,11 +29,19 @@ import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.database.*
 import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.StorageReference
-import com.google.firebase.storage.StorageTask
 import com.google.firebase.storage.UploadTask
 import com.luanegra.rsachat.R
 import com.luanegra.rsachat.modelclasses.Users
+import id.zelory.compressor.Compressor
+import id.zelory.compressor.constraint.format
+import id.zelory.compressor.constraint.quality
+import kotlinx.coroutines.launch
+import pl.aprilapps.easyphotopicker.DefaultCallback
+import pl.aprilapps.easyphotopicker.EasyImage
+import pl.aprilapps.easyphotopicker.MediaFile
+import pl.aprilapps.easyphotopicker.MediaSource
 import java.io.ByteArrayOutputStream
+import java.io.File
 import java.util.*
 import kotlin.collections.HashMap
 
@@ -45,7 +53,6 @@ class SettingsFragment : Fragment() {
     private var imageUri: Uri? = null
     private var storageProfileRef: StorageReference? = null
     private var storageCoverRef: StorageReference? = null
-
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -237,99 +244,147 @@ class SettingsFragment : Fragment() {
     }
 
     val intent = Intent()
+    var easyImage: EasyImage? = null
     private fun pickimage(){
-        intent.type = "image/*"
+
+
         intent.putExtra("resultAUTH", "true")
-        intent.action = Intent.ACTION_GET_CONTENT
-        requireActivity().intent = intent
-        startActivityForResult(intent, RequestCode)
+
+        requireActivity().intent.putExtra("resultAUTH", "true")
+
+         easyImage = EasyImage.Builder(requireContext())
+            .setCopyImagesToPublicGalleryFolder(false)
+            .setFolderName("EasyImage sample")
+            .allowMultiple(false)
+            .build()
+
+        easyImage!!.openChooser(this)
 
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         if(RequestCode == 1 && resultCode == Activity.RESULT_OK && data!!.data != null){
-            imageUri = data.data
-            uploadImage(1)
+            easyImage!!.handleActivityResult(
+                requestCode,
+                resultCode,
+                data,
+                requireActivity(),
+                object : DefaultCallback() {
+                    override fun onMediaFilesPicked(imageFiles: Array<MediaFile>, source: MediaSource) {
+                        //imageUri = imageFiles.get(0).file
+                        uploadImage(1, imageFiles.get(0).file)
+                    }
 
+                    override fun onImagePickerError(error: Throwable, source: MediaSource) {
+                        //Some error handling
+                        error.printStackTrace()
+                    }
+
+                    override fun onCanceled(source: MediaSource) {
+                        //Not necessary to remove any files manually anymore
+                    }
+                })
         }else if(RequestCode == 2 && resultCode == Activity.RESULT_OK && data!!.data != null){
-            imageUri = data.data
-            uploadImage(2)
+            easyImage!!.handleActivityResult(
+                requestCode,
+                resultCode,
+                data,
+                requireActivity(),
+                object : DefaultCallback() {
+                    override fun onMediaFilesPicked(imageFiles: Array<MediaFile>, source: MediaSource) {
+                        //imageUri = imageFiles.get(0).file
+                        uploadImage(2, imageFiles.get(0).file)
+                    }
+
+                    override fun onImagePickerError(error: Throwable, source: MediaSource) {
+                        //Some error handling
+                        error.printStackTrace()
+                    }
+
+                    override fun onCanceled(source: MediaSource) {
+                        //Not necessary to remove any files manually anymore
+                    }
+                })
         }
     }
 
-    fun getBitmapByteCount(bitmap: Bitmap): Int {
-        return bitmap.allocationByteCount
-    }
+    private fun uploadImage(type: Int, filetoup: File){
+        val loadingBar = ProgressDialog(context)
+        if(type == 1){
+            val fileRef = storageProfileRef!!.child(
+                System.currentTimeMillis().toString() + ".jpg"
+            )
+            lifecycleScope.launch {
 
-    private fun uploadImage(type: Int){
-        val progressBar = ProgressDialog(context)
-        progressBar.setMessage(getString(R.string.imageisuploading))
-        progressBar.show()
-        if(imageUri != null){
-           if(type == 1){
-               val fileRef = storageProfileRef!!.child(
-                   System.currentTimeMillis().toString() + ".jpg"
-               )
-               val bmp = MediaStore.Images.Media.getBitmap(
-                   requireContext().getContentResolver(),
-                   imageUri
-               )
-               if(bmp.allocationByteCount < 30000000){
-                   val baos = ByteArrayOutputStream()
-                   bmp.compress(Bitmap.CompressFormat.JPEG, 25, baos)
+                val compressedImageFile = Compressor.compress(requireView().context, filetoup){
+                    quality(25)
+                    format(Bitmap.CompressFormat.JPEG)
+                }
+                if(compressedImageFile.length() < 30000000){
+                    loadingBar.setMessage(getString(R.string.pleasewait))
+                    loadingBar.setCancelable(false)
+                    loadingBar.show()
+                    val uploadTask2: UploadTask = fileRef.putBytes(compressedImageFile.readBytes())
+                    uploadTask2.continueWithTask(Continuation<UploadTask.TaskSnapshot, Task<Uri>> { task ->
+                        if (task.isSuccessful) {
+                            task.exception?.let {
+                                throw it
+                            }
+                        }
+                        return@Continuation fileRef.downloadUrl
+                    }).addOnCompleteListener { task ->
+                        if(task.isSuccessful){
+                            val downloadUrl = task.result
+                            val map = HashMap<String, Any>()
+                            map["profile"] = downloadUrl.toString()
+                            refUsers!!.updateChildren(map)
+                            loadingBar.dismiss()
 
-                   val data = baos.toByteArray()
-                   val uploadTask2: UploadTask = fileRef.putBytes(data)
-                   uploadTask2.continueWithTask(Continuation<UploadTask.TaskSnapshot, Task<Uri>> { task ->
-                       if (task.isSuccessful) {
-                           task.exception?.let {
-                               throw it
-                           }
-                       }
-                       return@Continuation fileRef.downloadUrl
-                   }).addOnCompleteListener { task ->
-                       if(task.isSuccessful){
-                           val downloadUrl = task.result
-                           val map = HashMap<String, Any>()
-                           map["profile"] = downloadUrl.toString()
-                           refUsers!!.updateChildren(map)
-                           progressBar.dismiss()
-                       }
-                   }
-               }
+                        }
+                    }
+                }else{
+                    Toast.makeText(context, getString(R.string.imagetoobig), Toast.LENGTH_LONG).show()
+                }
+            }
 
-           }else if(type == 2){
-               val fileRef = storageCoverRef!!.child(System.currentTimeMillis().toString() + ".jpg")
-               val bmp = MediaStore.Images.Media.getBitmap(
-                   requireContext().getContentResolver(),
-                   imageUri
-               )
-               if(bmp.allocationByteCount < 30000000){
-                   val baos = ByteArrayOutputStream()
-                   bmp.compress(Bitmap.CompressFormat.JPEG, 25, baos)
-                   val data = baos.toByteArray()
-                   //uploading the image
-                   //uploading the image
-                   val uploadTask2: UploadTask = fileRef.putBytes(data)
-                   uploadTask2.continueWithTask(Continuation<UploadTask.TaskSnapshot, Task<Uri>> { task ->
-                       if (task.isSuccessful) {
-                           task.exception?.let {
-                               throw it
-                           }
-                       }
-                       return@Continuation fileRef.downloadUrl
-                   }).addOnCompleteListener { task ->
-                       if(task.isSuccessful){
-                           val downloadUrl = task.result
-                           val map = HashMap<String, Any>()
-                           map["profile"] = downloadUrl.toString()
-                           refUsers!!.updateChildren(map)
-                           progressBar.dismiss()
-                       }
-                   }
-               }
-           }
+
+        }else if(type == 2){
+            val fileRef = storageCoverRef!!.child(System.currentTimeMillis().toString() + ".jpg")
+            lifecycleScope.launch {
+                val compressedImageFile = Compressor.compress(requireView().context, filetoup){
+                    quality(25)
+                    format(Bitmap.CompressFormat.JPEG)
+                }
+                if(compressedImageFile.length() < 30000000){
+                    loadingBar.setMessage(getString(R.string.pleasewait))
+                    loadingBar.setCancelable(false)
+                    loadingBar.show()
+                    val uploadTask2: UploadTask = fileRef.putBytes(compressedImageFile.readBytes())
+                    uploadTask2.continueWithTask(Continuation<UploadTask.TaskSnapshot, Task<Uri>> { task ->
+                        if (task.isSuccessful) {
+                            task.exception?.let {
+                                throw it
+                            }
+                        }
+                        return@Continuation fileRef.downloadUrl
+                    }).addOnCompleteListener { task ->
+                        if(task.isSuccessful){
+                            val downloadUrl = task.result
+                            val map = HashMap<String, Any>()
+                            map["profile"] = downloadUrl.toString()
+                            refUsers!!.updateChildren(map)
+                            loadingBar.dismiss()
+                        }
+                    }
+                }else{
+                    Toast.makeText(context, getString(R.string.imagetoobig), Toast.LENGTH_LONG).show()
+                }
+            }
         }
     }
+
+
+
+
 }

@@ -31,7 +31,6 @@ android {
         throw new FileNotFoundException("Could not read version.properties!")
     }
     ext.autoIncrementBuildNumber = {
-
         if (versionPropsFile.canRead()) {
             Properties versionProps = new Properties()
             versionProps.load(new FileInputStream(versionPropsFile))
@@ -87,7 +86,7 @@ android {
 
 dependencies {
 
-    implementation ("org.jetbrains.kotlin:kotlin-stdlib:1.4.20"){
+    implementation ("org.jetbrains.kotlin:kotlin-stdlib:1.4.21"){
         exclude group:"org.jetbrains.kotlin", module: "kotlin-stdlib-jdk7"
     }
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
@@ -120,6 +119,8 @@ dependencies {
     implementation 'com.nimbusds:nimbus-jose-jwt:9.1.4'
     implementation("io.coil-kt:coil:1.1.0")
     implementation 'androidx.biometric:biometric:1.0.1'
+    implementation 'id.zelory:compressor:3.0.0'
+    implementation 'com.github.jkwiecien:EasyImage:3.0.4'
 
 }
 apply plugin: 'com.google.gms.google-services'
