@@ -123,7 +123,7 @@ class MessageChatActivity : AppCompatActivity() {
             intent.putExtra("resultAUTH", "true")
             easyImage = EasyImage.Builder(this)
                 .setCopyImagesToPublicGalleryFolder(false)
-                .setFolderName("EasyImage sample")
+                .setFolderName(getString(R.string.selectimage))
                 .allowMultiple(false)
                 .build()
             easyImage!!.openChooser(this)

@@ -254,7 +254,7 @@ class SettingsFragment : Fragment() {
 
          easyImage = EasyImage.Builder(requireContext())
             .setCopyImagesToPublicGalleryFolder(false)
-            .setFolderName("EasyImage sample")
+            .setFolderName(getString(R.string.selectimage))
             .allowMultiple(false)
             .build()
 

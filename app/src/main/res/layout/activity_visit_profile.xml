@@ -27,16 +27,18 @@
 
     <androidx.cardview.widget.CardView
         android:id="@+id/card_visitprofile"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:layout_constraintBottom_toTopOf="@+id/linearLayout2"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
+        android:backgroundTint="@color/colorChatRight"
         app:layout_constraintTop_toBottomOf="@+id/barlayout_visitprofile">
 
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@color/colorPrimaryDarker">
+            android:background="@color/colorChatRight">
 
             <ImageView
                 android:id="@+id/cover_visitprofile"
@@ -59,23 +61,24 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_below="@+id/profileimage_visitprofile"
-                android:layout_marginTop="20dp"
                 android:layout_marginStart="20dp"
+                android:layout_marginTop="30dp"
                 android:layout_marginEnd="20dp"
                 android:layout_marginBottom="20dp"
+                android:minHeight="150dp"
+                android:hint="@string/about_mehint"
                 android:textColorHint="@color/colorgrey"
                 app:boxBackgroundColor="@color/colorSoftDark"
                 app:boxCornerRadiusTopEnd="15dp"
-                app:boxCornerRadiusTopStart="15dp"
-                android:hint="@string/about_mehint">
+                app:boxCornerRadiusTopStart="15dp">
 
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/aboutme_visitprofile"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:textColor="@color/colorProfile"
+                    android:minHeight="150dp"
                     android:enabled="false"
-                    />
+                    android:textColor="@color/white" />
 
             </com.google.android.material.textfield.TextInputLayout>
 
@@ -83,20 +86,22 @@
     </androidx.cardview.widget.CardView>
 
     <LinearLayout
+        android:id="@+id/linearLayout2"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@+id/card_visitprofile"
+        android:layout_marginBottom="20dp"
         android:background="@color/colorProfile"
         android:gravity="center"
         android:orientation="horizontal"
-        android:padding="6dp"
         app:layout_constraintBottom_toTopOf="@+id/button_sendmessageUser"
-        app:layout_constraintTop_toBottomOf="@+id/card_visitprofile">
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent">
 
         <ImageView
             android:id="@+id/facebook_visitprofile"
-            android:layout_width="60dp"
-            android:layout_height="60dp"
+            android:layout_width="45dp"
+            android:layout_height="45dp"
             android:layout_gravity="center"
             android:layout_marginTop="2dp"
             android:background="@drawable/ic_facebook"
@@ -104,8 +109,8 @@
 
         <ImageView
             android:id="@+id/instagram_visitprofile"
-            android:layout_width="60dp"
-            android:layout_height="60dp"
+            android:layout_width="45dp"
+            android:layout_height="45dp"
             android:layout_gravity="center"
             android:layout_marginStart="15dp"
             android:layout_marginTop="2dp"
@@ -115,8 +120,8 @@
 
         <ImageView
             android:id="@+id/website_visitprofile"
-            android:layout_width="60dp"
-            android:layout_height="60dp"
+            android:layout_width="45dp"
+            android:layout_height="45dp"
             android:layout_gravity="center"
             android:layout_marginTop="2dp"
             android:background="@drawable/website"
@@ -129,8 +134,11 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="15dp"
+        android:backgroundTint="@color/colorChatRight"
         android:text="@string/send_message"
+        android:textColor="@color/white"
         app:layout_constraintBottom_toBottomOf="parent"
-        />
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

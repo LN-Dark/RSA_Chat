@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="100dp"
+    android:layout_height="130dp"
     android:background="@drawable/round_corners_chat_left"
     android:backgroundTint="@color/colorPrimaryDark"
     android:layout_marginBottom="7dp"
@@ -17,9 +18,8 @@
         android:layout_marginTop="9dp"
         android:layout_marginStart="7dp"
         app:civ_border_width="1dp"
-        app:civ_border_color="@color/colorPrimaryDark"
-        android:tint="@android:color/white">
-    </de.hdodenhof.circleimageview.CircleImageView>
+        android:layout_centerHorizontal="true"
+        app:civ_border_color="@color/colorPrimaryDark"/>
 
     <TextView
         android:id="@+id/user_name_search"
@@ -27,52 +27,49 @@
         android:layout_height="wrap_content"
         android:text="@string/username"
         android:textSize="18sp"
-        android:layout_marginStart="26dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginStart="5dp"
+        android:layout_marginEnd="5dp"
         android:textColor="@android:color/white"
         android:textStyle="bold"
-        android:layout_toEndOf="@id/profile_image_search"
-        android:layout_centerInParent="true">
-    </TextView>
+        android:gravity="center"
+        android:maxLines="2"
+        android:layout_below="@id/profile_image_search"
+        android:layout_centerInParent="true"/>
 
     <de.hdodenhof.circleimageview.CircleImageView
         android:id="@+id/image_online_search"
         android:layout_width="19dp"
         android:layout_height="19dp"
-        android:src="@color/green"
-        app:civ_border_width="2dp"
+        app:civ_border_width="1dp"
         android:layout_marginStart="-15dp"
         android:layout_marginTop="-20dp"
-        android:visibility="gone"
-        android:layout_toEndOf="@id/profile_image_search"
-        android:layout_below="@+id/profile_image_search">
-    </de.hdodenhof.circleimageview.CircleImageView>
+        android:src="@color/green"
+        android:layout_toEndOf="@+id/profile_image_search"
+        android:layout_below="@+id/profile_image_search"
+        android:visibility="gone"/>
 
     <de.hdodenhof.circleimageview.CircleImageView
         android:id="@+id/image_offline_search"
         android:layout_width="19dp"
         android:layout_height="19dp"
         android:src="@color/colorAccent"
-        app:civ_border_width="2dp"
+        app:civ_border_width="1dp"
         android:layout_marginStart="-15dp"
         android:layout_marginTop="-20dp"
         android:layout_toEndOf="@+id/profile_image_search"
         android:layout_below="@+id/profile_image_search"
-        android:visibility="gone">
-    </de.hdodenhof.circleimageview.CircleImageView>
+        android:visibility="gone"/>
 
     <TextView
         android:id="@+id/message_last_search"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
         android:textSize="15sp"
-        android:layout_marginStart="20dp"
         android:textColor="@color/colorgrey"
         android:textStyle="italic"
         android:layout_toEndOf="@id/profile_image_search"
         android:maxLines="1"
-        android:layout_marginTop="14dp"
-        android:padding="6dp"
-        android:layout_below="@id/user_name_search">
-    </TextView>
+        android:layout_below="@id/user_name_search"/>
 
 </RelativeLayout>

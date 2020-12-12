@@ -9,25 +9,28 @@
 
    <androidx.cardview.widget.CardView
        android:id="@+id/card_1"
-       android:layout_width="match_parent"
-       android:layout_height="wrap_content"
+       android:layout_width="0dp"
+       android:layout_height="0dp"
+       app:layout_constraintBottom_toTopOf="@+id/check_notifications_settings"
        app:layout_constraintEnd_toEndOf="parent"
        app:layout_constraintStart_toStartOf="parent"
+       android:layout_marginBottom="10dp"
+       android:backgroundTint="@color/colorChatRight"
        app:layout_constraintTop_toTopOf="parent">
 
       <RelativeLayout
           android:layout_width="match_parent"
           android:layout_height="wrap_content"
-          android:background="@color/colorPrimaryDarker">
+          android:background="@color/colorChatRight">
 
          <ImageView
              android:id="@+id/cover_settings"
              android:layout_width="match_parent"
              android:layout_height="200dp"
-             android:scaleType="centerCrop"
-             android:outlineProvider="bounds"
              android:elevation="2dp"
              android:fadingEdgeLength="10dp"
+             android:outlineProvider="bounds"
+             android:scaleType="centerCrop"
              android:src="@drawable/coverdefault" />
 
          <de.hdodenhof.circleimageview.CircleImageView
@@ -35,9 +38,9 @@
              android:layout_width="150dp"
              android:layout_height="150dp"
              android:layout_centerHorizontal="true"
-             android:outlineProvider="bounds"
-             android:elevation="2dp"
              android:layout_marginTop="140dp"
+             android:elevation="2dp"
+             android:outlineProvider="bounds"
              android:scaleType="centerCrop"
              android:src="@drawable/profile_1" />
 
@@ -47,7 +50,10 @@
              android:layout_width="match_parent"
              android:layout_height="wrap_content"
              android:layout_below="@+id/profileimage_settings"
-             android:layout_margin="20dp"
+             android:layout_marginStart="20dp"
+             android:layout_marginTop="30dp"
+             android:layout_marginEnd="20dp"
+             android:layout_marginBottom="10dp"
              android:hint="@string/username"
              android:textColorHint="@color/colorgrey"
              app:boxBackgroundColor="@color/colorSoftDark"
@@ -58,7 +64,7 @@
                 android:id="@+id/username_settings"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:textColor="@color/colorProfile"/>
+                android:textColor="@color/white" />
 
          </com.google.android.material.textfield.TextInputLayout>
 
@@ -67,22 +73,23 @@
              android:layout_width="match_parent"
              android:layout_height="wrap_content"
              android:layout_below="@+id/username_layout_settings"
-             android:layout_marginTop="10dp"
              android:layout_marginStart="20dp"
+             android:layout_marginTop="10dp"
              android:layout_marginEnd="20dp"
              android:layout_marginBottom="20dp"
+             android:hint="@string/about_mehint"
+             android:minHeight="150dp"
              android:textColorHint="@color/colorgrey"
              app:boxBackgroundColor="@color/colorSoftDark"
              app:boxCornerRadiusTopEnd="15dp"
-             app:boxCornerRadiusTopStart="15dp"
-             android:hint="@string/about_mehint">
+             app:boxCornerRadiusTopStart="15dp">
 
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/aboutme_settings"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:textColor="@color/colorProfile"
-                />
+                android:minHeight="150dp"
+                android:textColor="@color/white" />
 
          </com.google.android.material.textfield.TextInputLayout>
 
@@ -93,14 +100,13 @@
        android:id="@+id/check_notifications_settings"
        android:layout_width="match_parent"
        android:layout_height="0dp"
+       android:layout_margin="10dp"
        android:checked="true"
        android:text="@string/notifications"
-       android:layout_marginStart="20dp"
-       android:layout_marginEnd="20dp"
        android:textColor="@color/colorProfile"
+       app:layout_constraintBottom_toTopOf="@+id/linearLayout"
        app:layout_constraintEnd_toEndOf="parent"
-       app:layout_constraintStart_toStartOf="parent"
-       app:layout_constraintTop_toBottomOf="@+id/card_1" />
+       app:layout_constraintStart_toStartOf="parent" />
 
    <LinearLayout
        android:id="@+id/linearLayout"
@@ -109,15 +115,16 @@
        android:layout_below="@+id/card_1"
        android:background="@color/colorProfile"
        android:gravity="center"
+
        android:orientation="horizontal"
-       android:padding="6dp"
        app:layout_constraintBottom_toBottomOf="parent"
-       app:layout_constraintTop_toBottomOf="@+id/check_notifications_settings">
+       app:layout_constraintEnd_toEndOf="parent"
+       app:layout_constraintStart_toStartOf="parent">
 
       <ImageView
           android:id="@+id/facebook_settings"
-          android:layout_width="60dp"
-          android:layout_height="60dp"
+          android:layout_width="40dp"
+          android:layout_height="40dp"
           android:layout_gravity="center"
           android:layout_marginTop="2dp"
           android:background="@drawable/ic_facebook"
@@ -125,8 +132,8 @@
 
       <ImageView
           android:id="@+id/instagram_settings"
-          android:layout_width="60dp"
-          android:layout_height="60dp"
+          android:layout_width="40dp"
+          android:layout_height="40dp"
           android:layout_gravity="center"
           android:layout_marginStart="15dp"
           android:layout_marginTop="2dp"
@@ -136,8 +143,8 @@
 
       <ImageView
           android:id="@+id/website_settings"
-          android:layout_width="60dp"
-          android:layout_height="60dp"
+          android:layout_width="40dp"
+          android:layout_height="40dp"
           android:layout_gravity="center"
           android:layout_marginTop="2dp"
           android:background="@drawable/website"

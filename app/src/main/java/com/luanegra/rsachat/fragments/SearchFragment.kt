@@ -1,19 +1,19 @@
 package com.luanegra.rsachat.fragments
 
-import android.content.Intent
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
+import android.util.DisplayMetrics
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.textfield.TextInputEditText
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.*
-import com.luanegra.rsachat.AutenticationActivity
 import com.luanegra.rsachat.R
 import com.luanegra.rsachat.adapterClasses.UserAdapter
 import com.luanegra.rsachat.modelclasses.Users
@@ -36,10 +36,21 @@ class SearchFragment : Fragment() {
         mUsers = ArrayList()
         recycler_search = view.findViewById(R.id.recycler_search)
         recycler_search!!.setHasFixedSize(true)
-        recycler_search!!.layoutManager = LinearLayoutManager(activity)
+
+
+        val display = requireActivity().windowManager.defaultDisplay
+        val outMetrics = DisplayMetrics()
+        display.getMetrics(outMetrics)
+        val lLayout: GridLayoutManager
+        val density = resources.displayMetrics.density
+        val dpWidth = outMetrics.widthPixels / density
+        val columns = Math.round(dpWidth / 105)
+        lLayout = GridLayoutManager(activity, columns)
+
+        recycler_search!!.layoutManager = lLayout
         txt_search = view.findViewById(R.id.txt_search)
         retrieveAllUsers()
-        txt_search!!.addTextChangedListener(object: TextWatcher{
+        txt_search!!.addTextChangedListener(object : TextWatcher {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
 
             }
@@ -59,20 +70,20 @@ class SearchFragment : Fragment() {
         val firebaseUser = FirebaseAuth.getInstance().currentUser!!.uid
         var refUsers: DatabaseReference? = null
         refUsers = FirebaseDatabase.getInstance().reference.child("users")
-        refUsers.addValueEventListener(object: ValueEventListener{
+        refUsers.addValueEventListener(object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
                 (mUsers as ArrayList<Users>).clear()
                 recycler_search?.adapter?.notifyDataSetChanged()
-                if(txt_search!!.text.toString() == ""){
-                    if(snapshot.exists()){
-                        for(user in snapshot.children){
+                if (txt_search!!.text.toString() == "") {
+                    if (snapshot.exists()) {
+                        for (user in snapshot.children) {
                             val newuser: Users? = user.getValue(Users::class.java)
-                            if((newuser!!.getUid()) != firebaseUser){
+                            if ((newuser!!.getUid()) != firebaseUser) {
                                 (mUsers as ArrayList<Users>).add(newuser)
                             }
                         }
-                        if(context != null){
-                            userAdapter = UserAdapter(context!!, mUsers!!, false)
+                        if (context != null) {
+                            userAdapter = UserAdapter(context!!, mUsers!!, false, 0)
                             recycler_search!!.adapter = userAdapter
                         }
 
@@ -89,19 +100,21 @@ class SearchFragment : Fragment() {
     private fun retrieveSearchUsers(searchname: String) {
        if(searchname != ""){
            val firebaseUser = FirebaseAuth.getInstance().currentUser!!.uid
-           val queryUsers = FirebaseDatabase.getInstance().reference.child("users").orderByChild("search").startAt(searchname).endAt(searchname + "\uf8ff")
-           queryUsers.addValueEventListener(object: ValueEventListener{
+           val queryUsers = FirebaseDatabase.getInstance().reference.child("users").orderByChild("search").startAt(
+               searchname
+           ).endAt(searchname + "\uf8ff")
+           queryUsers.addValueEventListener(object : ValueEventListener {
                override fun onDataChange(snapshot: DataSnapshot) {
                    (mUsers as ArrayList<Users>).clear()
                    recycler_search?.adapter?.notifyDataSetChanged()
-                   if(snapshot.exists()){
-                       for(user in snapshot.children){
+                   if (snapshot.exists()) {
+                       for (user in snapshot.children) {
                            val newuser: Users? = user.getValue(Users::class.java)
-                           if((newuser!!.getUid()) != firebaseUser){
+                           if ((newuser!!.getUid()) != firebaseUser) {
                                (mUsers as ArrayList<Users>).add(newuser)
                            }
                        }
-                       userAdapter = UserAdapter(context!!, mUsers!!, false)
+                       userAdapter = UserAdapter(context!!, mUsers!!, false, 0)
                        recycler_search!!.adapter = userAdapter
                    }
                }

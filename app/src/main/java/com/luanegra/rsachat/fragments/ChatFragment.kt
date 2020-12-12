@@ -85,7 +85,7 @@ class ChatFragment : Fragment() {
                         }
                     }
                 }
-                userAdapter = UserAdapter(context!!, (mUsers as ArrayList<Users>), true)
+                userAdapter = UserAdapter(context!!, (mUsers as ArrayList<Users>), true, 1)
                 recycler_chats.adapter = userAdapter
             }
 

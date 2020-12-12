@@ -59,4 +59,6 @@
     <string name="loginusingfingerprint">Desbloqueia usando a segurança do Smartphone</string>
     <string name="authenticationrequired">Autenticação obrigatória</string>
     <string name="notifications">Notificações</string>
+    <string name="imagetoobig">A imagem é demasiado grande, por favor escolhe outra!</string>
+    <string name="pleasewait">Aguarda…</string>
 </resources>

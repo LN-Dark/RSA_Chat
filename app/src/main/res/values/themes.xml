@@ -10,6 +10,7 @@
         <item name="colorSecondaryVariant">@color/colorProfile</item>
         <item name="colorOnSecondary">@color/black</item>
         <!-- Status bar color. -->
+        <item name="android:itemTextAppearance">@style/myCustomMenuTextAppearance</item>
         <item name="android:statusBarColor" tools:targetApi="l">?attr/colorPrimaryVariant</item>
         <!-- Customize your theme here. -->
     </style>
@@ -17,6 +18,10 @@
     <style name="Theme.RSAChat.NoActionBar">
         <item name="windowActionBar">false</item>
         <item name="windowNoTitle">true</item>
+    </style>
+
+    <style name="myCustomMenuTextAppearance" parent="@android:style/TextAppearance.Widget.IconMenu.Item">
+        <item name="android:textColor">@color/colorgrey</item>
     </style>
 
     <style name="Theme.RSAChat.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />

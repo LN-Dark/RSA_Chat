@@ -59,4 +59,6 @@
     <string name="loginusingfingerprint">Unlock using device security</string>
     <string name="authenticationrequired">Authentication required</string>
     <string name="notifications">Notifications</string>
+    <string name="imagetoobig">Image is too big, please choose another image</string>
+    <string name="pleasewait">Please wait…</string>
 </resources>
